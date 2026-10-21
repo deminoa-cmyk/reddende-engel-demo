@@ -28,24 +28,20 @@ svg{display:block}
 /* ---------- Demo-balk + stage ---------- */
 .demobar{position:fixed;top:0;left:0;right:0;height:var(--bar-h);z-index:100;background:#032145;color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;letter-spacing:.02em}
 .demobar b{color:var(--yellow);margin-right:6px}
-.stage{position:fixed;top:var(--bar-h);left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:40px;padding:24px}
+.stage{position:fixed;top:var(--bar-h);left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:88px;padding:28px 32px}
 .side{justify-self:end;max-width:300px;color:#fff}
 .side .head{font-size:30px;line-height:1.05;margin-bottom:14px}
 .side p{font-size:15px;line-height:1.5;margin:0 0 10px;opacity:.95}
 .side .small{font-size:13px;opacity:.8}
-.gearcol{justify-self:start}
-.gear{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.95);box-shadow:var(--shadow);display:grid;place-items:center;color:var(--secondary);position:relative}
-.gear:hover{transform:rotate(30deg);transition:transform .3s}
-.gear .dot{position:absolute;top:2px;right:2px;width:12px;height:12px;border-radius:50%;background:var(--yellow);border:2px solid #fff;display:none}
-.gear.attn .dot{display:block}
-.gearlabel{color:#fff;font-size:12px;font-weight:600;margin-top:6px;text-align:center;opacity:.85}
 
-#app{position:relative;width:430px;height:min(900px,calc(100vh - var(--bar-h) - 48px));background:var(--bg);border-radius:30px;overflow:hidden;overflow:clip;box-shadow:0 30px 80px rgba(3,33,69,.45),0 0 0 8px rgba(255,255,255,.18)}
-@media (max-width:1000px){.side{display:none}.stage{grid-template-columns:1fr auto 1fr;gap:20px}}
+/* De telefoon wordt op groot scherm vergroot weergegeven (zoom), de hoogte past altijd in beeld */
+#app{--z:1.16;zoom:var(--z);position:relative;width:430px;height:calc(min(1040px,100vh - var(--bar-h) - 56px) / var(--z));background:var(--bg);border-radius:30px;overflow:hidden;overflow:clip;box-shadow:0 30px 80px rgba(3,33,69,.45),0 0 0 8px rgba(255,255,255,.18)}
+@media (max-width:1180px){.side{display:none}.stage{grid-template-columns:1fr auto 1fr;gap:20px}}
+@media (max-height:760px){#app{--z:1.08}}
 @media (max-width:600px){
   .stage{display:block;padding:0}
-  .gearcol,.side{display:none}
-  #app{width:100%;height:calc(100vh - var(--bar-h));height:calc(100dvh - var(--bar-h));border-radius:0;box-shadow:none}
+  .side{display:none}
+  #app{--z:1;zoom:1;width:100%;height:calc(100vh - var(--bar-h));height:calc(100dvh - var(--bar-h));border-radius:0;box-shadow:none}
   .demobar{font-size:11px}
 }
 
@@ -211,7 +207,7 @@ svg{display:block}
 .dtabs button{flex:1;height:46px;font-size:12px;font-weight:700;letter-spacing:.02em;padding:0 4px;color:var(--sub);position:relative}
 .dtabs button.on{color:var(--secondary)}
 .dtabs button.on:after{content:"";position:absolute;left:14%;right:14%;bottom:-1px;height:3px;border-radius:3px 3px 0 0;background:var(--secondary)}
-.dpane{padding:14px 16px 170px;animation:inFade .2s ease both}
+.dpane{padding:14px 16px 210px;animation:inFade .2s ease both}
 .sect{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:14px;margin-bottom:12px}
 .sect h3{font-size:13.5px;margin-bottom:10px;color:var(--secondary);letter-spacing:.03em}
 .when{display:flex;gap:12px;align-items:center}
@@ -225,9 +221,6 @@ svg{display:block}
 .chk{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:14px;cursor:pointer}
 .chk input{width:20px;height:20px;accent-color:var(--primary);margin:0}
 .chk span{color:var(--sub);margin-left:auto;font-size:13px}
-.dchips{display:flex;flex-wrap:wrap;gap:6px}
-.dchip{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:6px;background:#EEF3F8;color:var(--secondary);font-size:12.5px;font-weight:700}
-.dchip .ico{width:14px;height:14px}
 .earn{background:var(--grad-dark);color:#fff;border-radius:12px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden}
 .earn h3{color:rgba(255,255,255,.8);font-size:12.5px;margin:0 0 6px}
 .earn .big{font-family:'Archivo Black',sans-serif;font-size:36px;line-height:1.05}
@@ -322,11 +315,23 @@ details.why p{margin:0;padding:0 14px 14px;font-size:14px;line-height:1.45;color
 .done-card span{font-size:13px;color:var(--sub)}
 .paid{font-size:12px;font-weight:700;color:var(--green);display:flex;align-items:center;gap:4px;margin-top:3px}
 
-/* ---------- Tegenbod ---------- */
-.dbar-act{display:flex;flex-direction:column;align-items:center;gap:7px}
-.counter-link{font-size:13px;font-weight:600;color:#06438D;text-decoration:underline;text-underline-offset:3px}
-.counter-sent{font-size:12px;font-weight:700;color:var(--sub)}
-.dpane.has-counter{padding-bottom:200px}
+/* ---------- Doe een bod ---------- */
+.dbar-row .avail{font-size:12.5px;color:var(--sub);text-align:right;max-width:160px;line-height:1.35}
+.dbar-btns{display:flex;gap:10px;margin-top:12px}
+.dbar-btns .btn{flex:1;height:52px;padding:0 10px;font-size:15.5px}
+.dbar-btns .btn .ico{width:19px;height:19px}
+.dbar-link{display:block;margin:10px auto 0;font-size:12.5px}
+.bidscale{position:relative;display:flex;height:8px;border-radius:4px;overflow:hidden;margin:4px 0 6px}
+.bidscale span{height:100%}
+.bidscale-wrap{position:relative;margin-bottom:12px}
+.bidscale-wrap em{position:absolute;top:-4px;width:4px;height:16px;border-radius:2px;background:#0A0A0A;transform:translateX(-50%);transition:left .15s}
+.bidscale-lbl{display:flex;justify-content:space-between;font-size:11.5px;color:var(--sub);font-weight:600}
+.bidzone{display:flex;gap:10px;align-items:flex-start;border-radius:8px;padding:11px 12px;margin:0 0 14px;font-size:13.5px;line-height:1.4;transition:background .15s}
+.bidzone i{width:11px;height:11px;border-radius:50%;flex:none;margin-top:4px}
+.bidzone b{display:block;font-size:15px}
+.bidzone.g{background:#E6F4EC;color:#145C3B}.bidzone.g i{background:var(--green)}
+.bidzone.y{background:#FFF6D9;color:#5C4400}.bidzone.y i{background:var(--yellow)}
+.bidzone.r{background:#FDE7E8;color:#8E1F23}.bidzone.r i{background:var(--red)}
 .sheet-x{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;background:#F0F2F5;color:var(--sub);display:grid;place-items:center}
 .sheet.dragging{transition:none}
 .stepper{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px 0 10px}
@@ -336,60 +341,11 @@ details.why p{margin:0;padding:0 14px 14px;font-size:14px;line-height:1.45;color
 .step-val b{font-family:'Archivo Black',sans-serif;font-size:38px;font-weight:400;line-height:1}
 .step-val small{display:block;font-size:12.5px;color:var(--sub);font-weight:600;margin-top:4px}
 .sheet-note{font-size:13.5px;color:#333;line-height:1.45;background:#EEF3F8;border-radius:8px;padding:10px 12px;margin:0 0 16px}
-#scr-confirm h2.long{font-size:23px;line-height:1.15}
 
 /* ---------- Toast ---------- */
 .toast{position:absolute;left:50%;bottom:90px;transform:translate(-50%,20px);background:#032145;color:#fff;padding:11px 16px;border-radius:8px;font-size:14px;font-weight:600;z-index:40;opacity:0;pointer-events:none;transition:all .25s;max-width:86%;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
-/* ---------- Testmodus ---------- */
-.tp-bg{position:fixed;inset:0;background:rgba(3,33,69,.35);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s}
-.tp-bg.open{opacity:1;pointer-events:auto}
-.tpanel{position:fixed;top:calc(var(--bar-h) + 12px);right:12px;bottom:12px;width:400px;max-width:calc(100% - 24px);background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.35);z-index:201;transform:translateX(110%);transition:transform .3s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;font-size:14px}
-.tpanel.open{transform:none}
-@media (max-width:600px){.tpanel{top:var(--bar-h);right:0;bottom:0;width:100%;max-width:100%;border-radius:0}}
-.tp-h{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--grad-dark);color:#fff;border-radius:14px 14px 0 0}
-@media (max-width:600px){.tp-h{border-radius:0}}
-.tp-h h2{font-size:16px}
-.tp-h small{display:block;font-size:11.5px;opacity:.8;font-family:'Archivo',sans-serif;text-transform:none;margin-top:2px}
-.tp-b{flex:1;overflow:auto;padding:14px 16px 20px}
-.tp-sec{margin-bottom:18px}
-.tp-sec>label,.tp-lbl{display:block;font-size:11.5px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
-.tp-row{display:flex;gap:10px;align-items:flex-end}
-.tp-row>div{flex:1}
-.tp-in{width:100%;height:38px;border:1.5px solid var(--border);border-radius:6px;padding:0 10px;font:inherit;font-weight:700;font-size:15px}
-.tp-in:focus,.tp-ta:focus{outline:none;border-color:var(--primary)}
-.tp-seg{display:flex;border:1.5px solid var(--border);border-radius:6px;overflow:hidden;height:38px}
-.tp-seg button{flex:1;font-size:13px;font-weight:700;color:var(--sub)}
-.tp-seg button.on{background:var(--primary);color:#fff}
-.task{border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;transition:border-color .2s,background .2s}
-.task.run{border-color:var(--yellow);background:#FFFBEA}
-.task.done{border-color:#BFE3CF;background:#F3FBF6}
-.task-top{display:flex;gap:10px;align-items:flex-start}
-.task-n{width:24px;height:24px;border-radius:50%;background:var(--secondary);color:#fff;font-weight:700;font-size:13px;display:grid;place-items:center;flex:none}
-.task-q{flex:1;font-weight:600;line-height:1.35}
-.task-q small{display:block;font-weight:400;color:var(--sub);font-size:12px;margin-top:2px}
-.task-act{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-left:34px}
-.task-res{font-size:13px;color:var(--sub);font-weight:600}
-.task.run .task-res{color:#8A5A00}
-.task.done .task-res{color:var(--green)}
-.sbtn{height:32px;padding:0 14px;border-radius:5px;background:var(--primary);color:#fff;font-weight:700;font-size:12.5px;text-transform:uppercase;letter-spacing:.04em}
-.sbtn.y{background:var(--yellow);color:#0A0A0A}
-.sbtn.gh{background:#fff;color:var(--secondary);border:1.5px solid var(--secondary)}
-.sbtn.red{background:#fff;color:var(--red);border:1.5px solid var(--red)}
-.q{border-radius:10px;background:#EEF3F8;padding:12px;opacity:.55;pointer-events:none;transition:opacity .2s}
-.q.on{opacity:1;pointer-events:auto;background:#FFF6D9;box-shadow:0 0 0 2px var(--yellow)}
-.q p{margin:0 0 10px;font-weight:700;line-height:1.35}
-.q .tp-seg{background:#fff;margin-bottom:8px}
-.tp-ta{width:100%;min-height:60px;border:1.5px solid var(--border);border-radius:6px;padding:8px 10px;font:inherit;resize:vertical}
-.tp-actions{display:flex;flex-wrap:wrap;gap:8px}
-.restbl{margin-top:12px;overflow-x:auto;border:1px solid var(--border);border-radius:8px}
-.restbl table{border-collapse:collapse;width:100%;font-size:12px;min-width:560px}
-.restbl th,.restbl td{padding:6px 8px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
-.restbl th{background:#F2F5F8;font-weight:700;white-space:nowrap}
-.restbl tr.cur td{background:#FFFBEA}
-.tp-note{font-size:12px;color:var(--sub);line-height:1.4;margin-top:8px}
-.tp-copied{font-size:12.5px;color:var(--green);font-weight:700;margin-left:4px;align-self:center}
 </style>
 </head>
 <body>
@@ -504,18 +460,7 @@ details.why p{margin:0;padding:0 14px 14px;font-size:14px;line-height:1.45;color
     <div class="toast" id="toast"></div>
   </div>
 
-  <div class="gearcol">
-    <button class="gear" id="gear" aria-label="Testmodus openen"><svg class="ico" viewBox="0 0 24 24" style="width:24px;height:24px"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span class="dot"></span></button>
-    <div class="gearlabel">Testmodus</div>
-  </div>
 </div>
-
-<!-- Testmodus-paneel -->
-<div class="tp-bg" id="tpBg"></div>
-<aside class="tpanel" id="tpanel" aria-label="Testmodus">
-  <div class="tp-h"><div><h2>Testmodus</h2><small>Alleen in het geheugen van deze pagina · niets wordt opgeslagen</small></div><button class="iconbtn" id="tpClose" aria-label="Sluiten"><svg class="ico" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
-  <div class="tp-b" id="tpBody"></div>
-</aside>
 
 <script>
 /* =========================================================
@@ -739,7 +684,7 @@ const sortedServices = () => [...SERVICES].sort((a, b) => a.day - b.day || mins(
 const S = {
   current: 'lock', stack: [], selDay: 0, view: 'lijst', mapSel: null,
   favs: new Set(), applied: [], detailId: null, detailTab: 'overzicht', extraSel: new Set(),
-  entry: null, mineTab: 'aangemeld', plannerUsed: false, proposals: {}, proposeRate: 0
+  entry: null, mineTab: 'aangemeld', plannerUsed: false, bids: {}, bidRate: 0, pendingBid: null
 };
 
 /* =========================================================
@@ -795,7 +740,7 @@ let toastTimer;
 function toast(msg) {
   const t = $('#toast');
   t.textContent = msg;
-  t.style.bottom = TABBED.includes(S.current) ? '84px' : (S.current === 'detail' ? '140px' : '40px');
+  t.style.bottom = TABBED.includes(S.current) ? '84px' : (S.current === 'detail' ? '190px' : '40px');
   t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
@@ -928,12 +873,11 @@ function renderMap(list) {
    ========================================================= */
 function openDetail(id, via) {
   const s = byId(id);
-  S.detailId = id; S.detailTab = 'overzicht'; S.extraSel = new Set();
+  S.detailId = id; S.detailTab = 'overzicht'; S.extraSel = new Set(); S.pendingBid = null;
   if (via) S.entry = via;
   renderDetail();
   $('#detScroll').scrollTop = 0;
   go('detail', S.current === 'lock' ? 'fade' : 'fwd');
-  Test.event('detail', s);
 }
 function starStr(r) { const f = Math.round(r); return '★'.repeat(f) + '☆'.repeat(5 - f); }
 function renderDetail() {
@@ -959,19 +903,19 @@ function renderDetail() {
     <div class="dtabs" id="dtabs">
       ${['overzicht', 'beschrijving', 'opdrachtgever'].map(k => `<button data-dtab="${k}" class="${S.detailTab === k ? 'on' : ''}">${k.toUpperCase()}</button>`).join('')}
     </div>
-    <div class="dpane ${s.counter ? 'has-counter' : ''}" id="dpane">${detailPane(s)}</div>`;
+    <div class="dpane" id="dpane">${detailPane(s)}</div>`;
   const sub = s.applicants === 0 ? `Nog niemand aangemeld · ${s.spots} ${s.spots === 1 ? 'plek' : 'plekken'}` : `${s.applicants} ${s.applicants === 1 ? 'aanmelding' : 'aanmeldingen'} voor ${s.spots} ${s.spots === 1 ? 'plek' : 'plekken'}`;
+  const bid = S.bids[s.id];
   $('#dbar').innerHTML = `
     <div class="dbar-row">
       <div class="p"><b>${euro(s.rate)}/u</b><span>Verdien ~ ${euro(earnOf(s))}</span></div>
-      ${(() => {
-        const btn = applied ? `<button class="btn" disabled>${I.check} Aangemeld</button>` : `<button class="btn yellow" id="applyBtn">Aanmelden</button>`;
-        if (!s.counter) return btn;
-        const extra = S.proposals[s.id] ? `<span class="counter-sent">Voorstel verstuurd · ${euro(S.proposals[s.id])}/u</span>` : `<button class="counter-link" id="counterLink">Ander tarief voorstellen</button>`;
-        return `<div class="dbar-act">${btn}${extra}</div>`;
-      })()}
+      <span class="avail">${applied ? `Wacht op bevestiging${bid ? `<br>Jouw bod: ${euro(bid)}/u` : ''}` : sub}</span>
     </div>
-    <div class="dbar-sub"><span>${applied ? 'Wacht op bevestiging van de zaak' : sub}</span><button class="link" data-toast="Berichten zijn niet onderdeel van deze demo">Vraag? Stuur de planner een bericht</button></div>`;
+    <div class="dbar-btns">
+      ${applied ? `<button class="btn" disabled>${I.check} Aangemeld</button>`
+        : `<button class="btn" id="bidBtn">${I.euro} Doe een bod</button><button class="btn yellow" id="applyBtn">Aanmelden</button>`}
+    </div>
+    <button class="link dbar-link" data-toast="Berichten zijn niet onderdeel van deze demo">Vraag? Stuur de planner een bericht</button>`;
 }
 function detailPane(s) {
   const t = TYPES[s.type], c = CONTENT[s.type];
@@ -993,18 +937,11 @@ function detailPane(s) {
   const h = hoursOf(s);
   const extraHTML = s.extra.length ? `<div class="extra"><p>Deze dienst is ook op deze dagen beschikbaar</p>
       ${s.extra.map((e, i) => `<label class="chk"><input type="checkbox" data-extra="${i}" ${S.extraSel.has(i) ? 'checked' : ''}>${cap(fmtShort(e.day))}<span>${e.start} – ${e.end}</span></label>`).join('')}</div>` : '';
-  const pauseChip = s.pause ? `${s.pause} min pauze${s.pausePaid ? ' (betaald)' : ''}` : 'Geen pauze';
   return `
     <div class="sect">
       <div class="when"><div class="cal"><small>${DAY_SHORT[dateOf(s.day).getDay()]}</small><b>${dateOf(s.day).getDate()}</b><small>${MONTHS_SHORT[dateOf(s.day).getMonth()]}</small></div>
         <div class="wt"><b>${cap(fmtLong(s.day))}</b><span>${s.start} – ${s.end} · ${num(h)} uur betaald</span></div></div>
       ${extraHTML}
-    </div>
-    <div class="dchips" style="margin-bottom:12px">
-      <span class="dchip">${I.user}ZZP bij de opdrachtgever</span>
-      ${s.payout24 ? `<span class="dchip">${I.bolt}Uitbetaling binnen 24 uur mogelijk</span>` : ''}
-      <span class="dchip">${I.coffee}${pauseChip}</span>
-      <span class="dchip">${I.shirt}${s.dress}</span>
     </div>
     <div class="earn">
       ${s.match ? '<span class="label y tag">Past bij jou</span>' : ''}
@@ -1045,15 +982,16 @@ function detailMapSVG(s) {
    ========================================================= */
 function openSheet() {
   const s = byId(S.detailId), t = TYPES[s.type];
+  const rate = S.pendingBid || s.rate;
   const days = [{ day: s.day, start: s.start, end: s.end }, ...[...S.extraSel].sort().map(i => s.extra[i])];
-  const total = days.reduce((a, d) => a + paidHours(d.start, d.end, s.pause, s.pausePaid) * s.rate, 0);
+  const total = days.reduce((a, d) => a + paidHours(d.start, d.end, s.pause, s.pausePaid) * rate, 0);
   $('#sheet').innerHTML = `<div class="grab"></div>
     <h2>Check je aanmelding</h2>
     <p class="sub">Klopt alles? Dan meld je je met één tik aan.</p>
     <div class="sumrow"><span>Zaak</span><b>${s.name}</b></div>
     <div class="sumrow"><span>Functie</span><b>${t.label}</b></div>
     ${days.map((d, i) => `<div class="sumrow"><span>${i === 0 ? (days.length > 1 ? 'Datums' : 'Datum') : ''}</span><b>${cap(fmtShort(d.day))} · ${d.start} – ${d.end}</b></div>`).join('')}
-    <div class="sumrow"><span>Tarief</span><b>${euro(s.rate)}/u</b></div>
+    <div class="sumrow"><span>Tarief</span><b>${S.pendingBid ? `<span class="label y">Jouw bod</span> ${euro(rate)}/u` : `${euro(rate)}/u`}</b></div>
     <div class="sumtotal"><span>Verdien ~${days.length > 1 ? ` (${days.length} diensten)` : ''}</span><b>${euro(total)}</b></div>
     <button class="btn yellow block" id="confirmBtn">Bevestig aanmelding</button>
     <button class="cancel" id="cancelSheet">Annuleren</button>`;
@@ -1068,61 +1006,70 @@ function closeSheet() {
   delete sh.dataset.kind;
 }
 
-/* Tegenbod: tarief voorstellen */
-const COUNTER_STEP = 0.5, COUNTER_MAX = 8;
-function openCounterSheet() {
-  const s = byId(S.detailId);
-  S.proposeRate = s.rate;
+/* Doe een bod */
+const BID_STEP = 0.5, BID_MAX = 8;
+// Verzonnen grenzen per dienst: t/m de eerste wordt direct geaccepteerd, t/m de tweede beslist de zaak, daarboven te hoog
+const BID_LIMITS = { bosrand: [19, 21], lindehof: [22, 24], gooimeer: [23, 25], vista: [19.5, 21], brink: [25, 27.5],
+  spieghel: [18.5, 20], bastion: [21, 23], zuiderhaven: [18.5, 20.5], heidebloem: [24.5, 27], zonnehoek: [22, 24] };
+const BID_ZONES = {
+  g: ['Wordt direct geaccepteerd', 'Dit tarief keurt de zaak meteen goed.'],
+  y: ['De zaak beslist', 'De zaak ziet je bod en kiest zelf of ze akkoord gaat.'],
+  r: ['Hoger dan deze zaak meestal betaalt', 'De kans is klein dat de zaak dit accepteert.']
+};
+const bidZone = (s, r) => { const [ok, max] = BID_LIMITS[s.id]; return r <= ok ? 'g' : r <= max ? 'y' : 'r'; };
+function openBidSheet() {
+  const s = byId(S.detailId), [ok, max] = BID_LIMITS[s.id];
+  S.bidRate = s.rate + BID_STEP;
+  const pct = v => Math.min(100, Math.max(0, (v - s.rate) / BID_MAX * 100));
   const sh = $('#sheet');
-  sh.dataset.kind = 'counter';
+  sh.dataset.kind = 'bid';
   sh.innerHTML = `<div class="grab"></div>
     <button class="sheet-x" id="sheetX" aria-label="Sluiten"><svg class="ico" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-    <h2>Stel je tarief voor</h2>
-    <p class="sub">Huidig tarief: ${euro(s.rate)}/u</p>
+    <h2>Doe een bod</h2>
+    <p class="sub">Huidig tarief: ${euro(s.rate)}/u · kies je eigen uurtarief</p>
     <div class="stepper">
       <button class="step" data-step="-1" aria-label="Lager">−</button>
-      <div class="step-val"><b id="propRate"></b><small>per uur</small></div>
+      <div class="step-val"><b id="bidRate"></b><small>per uur</small></div>
       <button class="step" data-step="1" aria-label="Hoger">+</button>
     </div>
-    <div class="sumtotal"><span>Verdien ~</span><b id="propEarn"></b></div>
-    <p class="sheet-note">Heel normaal om te doen. De zaak ziet je voorstel en kan het accepteren of afwijzen. Je aanmelding blijft gewoon staan.</p>
-    <button class="btn block" id="sendProposal">Voorstel versturen</button>`;
-  updateCounterSheet();
+    <div class="bidscale-wrap">
+      <div class="bidscale">
+        <span style="width:${pct(ok)}%;background:var(--green)"></span>
+        <span style="width:${pct(max) - pct(ok)}%;background:var(--yellow)"></span>
+        <span style="flex:1;background:var(--red)"></span>
+      </div>
+      <em id="bidMarker"></em>
+      <div class="bidscale-lbl"><span>${euro(s.rate)}</span><span>${euro(s.rate + BID_MAX)}</span></div>
+    </div>
+    <div class="bidzone" id="bidZone"><i></i><div><b></b><span></span></div></div>
+    <div class="sumtotal"><span>Verdien ~</span><b id="bidEarn"></b></div>
+    <button class="btn yellow block" id="sendBid">Verstuur bod en meld je aan</button>`;
+  updateBidSheet();
   $('#sheetBg').classList.add('open');
   sh.classList.add('open');
-  Test.event('counterOpen', s);
 }
-function updateCounterSheet() {
-  const s = byId(S.detailId), r = S.proposeRate;
-  $('#propRate').textContent = euro(r);
-  $('#propEarn').textContent = euro(hoursOf(s) * r);
-  $('[data-step="-1"]').disabled = r <= s.rate;
-  $('[data-step="1"]').disabled = r >= s.rate + COUNTER_MAX;
-  $('#sendProposal').disabled = r <= s.rate;
+function updateBidSheet() {
+  const s = byId(S.detailId), r = S.bidRate, z = bidZone(s, r);
+  $('#bidRate').textContent = euro(r);
+  $('#bidEarn').textContent = euro(hoursOf(s) * r);
+  $('#bidMarker').style.left = `${(r - s.rate) / BID_MAX * 100}%`;
+  const zone = $('#bidZone');
+  zone.className = 'bidzone ' + z;
+  $('b', zone).textContent = BID_ZONES[z][0];
+  $('span', zone).textContent = BID_ZONES[z][1];
+  $('[data-step="-1"]').disabled = r <= s.rate + BID_STEP;
+  $('[data-step="1"]').disabled = r >= s.rate + BID_MAX;
 }
-function sendProposal() {
-  const s = byId(S.detailId), t = TYPES[s.type], r = S.proposeRate;
-  if (r <= s.rate) return;
-  S.proposals[s.id] = r;
-  if (!S.applied.includes(s.id)) S.applied.unshift(s.id);
+function sendBid() {
+  S.pendingBid = S.bidRate;
   closeSheet();
-  $('#scr-confirm').innerHTML = `
-    <div class="cf-top"><button class="roundbtn" data-back aria-label="Terug">${I.back}</button></div>
-    <div class="cf-check"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-    <h2 class="long">Je voorstel van <span style="text-transform:none">${euro(r)}/u</span> is verstuurd</h2>
-    <p class="lead">Je hoort het zodra de zaak heeft gereageerd.</p>
-    <div class="card cf-card"><div class="mi" style="background:${t.grad}">${typeSvg(t.icon, '')}</div>
-      <div><b>${s.name}</b><span>${t.label} · ${cap(fmtShort(s.day))} · ${s.start} – ${s.end}</span></div></div>
-    <button class="btn block" data-tab="mine">Naar mijn diensten</button>
-    <div class="demoinfo">Demo-info · Geregistreerd: tariefvoorstel via app (zonder planner)</div>`;
-  go('confirm', 'fade');
-  Test.event('proposal', s, r);
+  setTimeout(openSheet, 300);
 }
-// Tegenbod-sheet sluiten door naar beneden te vegen
+// Bod-sheet sluiten door naar beneden te vegen
 let sheetDrag = null;
 $('#sheet').addEventListener('pointerdown', e => {
   const sh = $('#sheet');
-  if (sh.dataset.kind !== 'counter' || e.target.closest('button')) return;
+  if (sh.dataset.kind !== 'bid' || e.target.closest('button')) return;
   sheetDrag = { y: e.clientY, dy: 0 };
   sh.classList.add('dragging');
 });
@@ -1141,21 +1088,23 @@ document.addEventListener('pointermove', e => {
 }));
 function confirmApply() {
   const s = byId(S.detailId), t = TYPES[s.type];
-  const nDays = 1 + S.extraSel.size;
+  const nDays = 1 + S.extraSel.size, bid = S.pendingBid;
   if (!S.applied.includes(s.id)) S.applied.unshift(s.id);
+  if (bid) S.bids[s.id] = bid;
+  S.pendingBid = null;
   closeSheet();
   const via = S.entry === 'melding' ? 'melding → app' : 'Ontdek → app';
+  const bidLine = { g: 'Dit tarief accepteert de zaak direct.', y: 'De zaak beslist of ze akkoord gaat.', r: 'Dit is hoger dan de zaak meestal betaalt, dus de kans is kleiner.' };
   $('#scr-confirm').innerHTML = `
     <div class="cf-top"><button class="roundbtn" data-back aria-label="Terug">${I.back}</button></div>
     <div class="cf-check"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
     <h2>Je bent aangemeld!</h2>
-    <p class="lead">De zaak bevestigt meestal binnen een paar uur. Je krijgt een melding.</p>
+    <p class="lead">${bid ? `Je bod van ${euro(bid)}/u is meegestuurd. ${bidLine[bidZone(s, bid)]} ` : ''}De zaak bevestigt meestal binnen een paar uur. Je krijgt een melding.</p>
     <div class="card cf-card"><div class="mi" style="background:${t.grad}">${typeSvg(t.icon, '')}</div>
-      <div><b>${s.name}</b><span>${t.label} · ${cap(fmtShort(s.day))} · ${s.start} – ${s.end}${nDays > 1 ? ` · +${nDays - 1} ${nDays === 2 ? 'dag' : 'dagen'}` : ''}</span></div></div>
+      <div><b>${s.name}</b><span>${t.label} · ${cap(fmtShort(s.day))} · ${s.start} – ${s.end}${nDays > 1 ? ` · +${nDays - 1} ${nDays === 2 ? 'dag' : 'dagen'}` : ''}${bid ? ` · jouw bod ${euro(bid)}/u` : ''}</span></div></div>
     <button class="btn block" data-tab="mine">Naar mijn diensten</button>
-    <div class="demoinfo">Demo-info · Geregistreerd: ingevuld via ${via} (zelfstandig, zonder planner)${S.plannerUsed ? ' · let op: planner-knop is gebruikt' : ''}</div>`;
+    <div class="demoinfo">Demo-info · Geregistreerd: ingevuld via ${via}${bid ? ', met eigen bod' : ''} (zelfstandig, zonder planner)${S.plannerUsed ? ' · let op: planner-knop is gebruikt' : ''}</div>`;
   go('confirm', 'fade');
-  Test.event('confirmed', s);
 }
 
 /* =========================================================
@@ -1166,7 +1115,7 @@ function renderMine() {
   const el = $('#mineList');
   if (S.mineTab === 'aangemeld') {
     el.innerHTML = S.applied.length
-      ? S.applied.map(id => tileHTML(byId(id), { status: S.proposals[id] ? `Voorstel verstuurd · ${euro(S.proposals[id])}/u` : 'Wacht op bevestiging', showDate: true })).join('')
+      ? S.applied.map(id => tileHTML(byId(id), { status: S.bids[id] ? `Wacht op bevestiging · bod ${euro(S.bids[id])}/u` : 'Wacht op bevestiging', showDate: true })).join('')
       : `<div class="empty"><div class="ei">${I.cal}</div><b>Nog geen aanmeldingen</b><p>Vind een dienst die bij je past en meld je aan.</p><button class="btn" data-tab="discover">Ontdek diensten</button></div>`;
   } else if (S.mineTab === 'bevestigd') {
     el.innerHTML = `<div class="empty"><div class="ei">${I.check}</div><b>Nog niks bevestigd</b><p>Zodra een zaak je kiest, zie je de dienst hier. Je krijgt dan ook een melding.</p></div>`;
@@ -1227,19 +1176,19 @@ $('#app').addEventListener('click', e => {
   }
   const mt = el.closest('[data-mt]');
   if (mt) { S.mineTab = mt.dataset.mt; return renderMine(); }
-  if (el.closest('#applyBtn')) { Test.event('apply'); return openSheet(); }
+  if (el.closest('#applyBtn')) { S.pendingBid = null; return openSheet(); }
   if (el.closest('#confirmBtn')) return confirmApply();
-  if (el.closest('#counterLink')) return openCounterSheet();
+  if (el.closest('#bidBtn')) return openBidSheet();
   const step = el.closest('[data-step]');
   if (step) {
     const s = byId(S.detailId);
-    S.proposeRate = Math.min(s.rate + COUNTER_MAX, Math.max(s.rate, S.proposeRate + COUNTER_STEP * +step.dataset.step));
-    return updateCounterSheet();
+    S.bidRate = Math.min(s.rate + BID_MAX, Math.max(s.rate + BID_STEP, S.bidRate + BID_STEP * +step.dataset.step));
+    return updateBidSheet();
   }
-  if (el.closest('#sendProposal')) return sendProposal();
+  if (el.closest('#sendBid')) return sendBid();
   if (el.closest('#sheetX')) return closeSheet();
   if (el.closest('#cancelSheet') || el.closest('#sheetBg')) return closeSheet();
-  if (el.closest('#callPlanner')) { S.plannerUsed = true; Test.event('planner'); return toast('Demo: hier bel je de planner'); }
+  if (el.closest('#callPlanner')) { S.plannerUsed = true; return toast('Demo: hier bel je de planner'); }
   if (el.closest('#notif')) return openDetail('lindehof', 'melding');
   if (el.closest('#skip')) { S.entry = 'ontdek'; return goTab('discover'); }
   if (el.closest('#vList')) { S.view = 'lijst'; return renderDiscover(); }
@@ -1251,223 +1200,6 @@ $('#app').addEventListener('change', e => {
   const x = e.target.closest('[data-extra]');
   if (x) { const i = +x.dataset.extra; x.checked ? S.extraSel.add(i) : S.extraSel.delete(i); }
 });
-
-/* =========================================================
-   Testmodus
-   ========================================================= */
-const TASKS = [
-  { q: 'Vind een dienst voor zaterdag die bij je past.', end: 'start → detail geopend' },
-  { q: 'Bekijk de dienst en vertel hardop of je hem zou doen.', end: 'start → AANMELDEN getikt' },
-  { q: 'Meld je aan voor de dienst.', end: 'start → bevestigd' }
-];
-const Test = {
-  code: 'P1', view: 'lijst', startScreen: 'melding',
-  running: null, t0: 0, taps: 0, res: [null, null, null],
-  answer: '', why: '', planner: 0, archive: [], showResults: false, tick: null,
-  t2Start: null, counter: null, proposal: null, lowAns: '', lowWhy: '',
-
-  event(type, s, rate) {
-    if (type === 'planner') this.planner++;
-    if (type === 'counterOpen' && !this.counter) this.counter = { secs: this.t2Start ? (performance.now() - this.t2Start) / 1000 : null };
-    if (type === 'proposal') this.proposal = rate;
-    if (type === 'detail' && this.running === 0) this.finish(0, s.name + (s.match ? '' : ' (past niet)'));
-    if (type === 'apply' && this.running === 1) this.finish(1);
-    if (type === 'confirmed' && this.running === 2) this.finish(2);
-  },
-  start(i) {
-    if (i === 0) {
-      resetApp(true);
-      if (this.startScreen === 'ontdek') { S.entry = 'ontdek'; goTab('discover'); }
-    }
-    this.running = i; this.t0 = performance.now(); this.taps = 0; this.res[i] = null;
-    if (i === 1) this.t2Start = this.t0;
-    closePanel();
-    clearInterval(this.tick);
-    this.tick = setInterval(() => this.updateLive(), 200);
-    renderPanel();
-  },
-  finish(i, found) {
-    const secs = (performance.now() - this.t0) / 1000;
-    this.res[i] = { secs, taps: this.taps, found };
-    this.running = null;
-    clearInterval(this.tick);
-    if (i === 2) $('#gear').classList.add('attn');
-    renderPanel();
-  },
-  stop() { this.running = null; clearInterval(this.tick); renderPanel(); },
-  updateLive() {
-    const el = $('#live');
-    if (el && this.running !== null) el.textContent = `loopt… ${num((performance.now() - this.t0) / 1000)} s · ${this.taps} tikken`;
-  },
-  record() {
-    return { code: this.code || '–', view: this.view, start: this.startScreen, res: this.res.slice(), answer: this.answer, why: this.why, planner: this.planner,
-      counter: this.counter, proposal: this.proposal, lowAns: this.lowAns, lowWhy: this.lowWhy };
-  },
-  hasData() { return this.res.some(Boolean) || this.answer || this.why || this.counter || this.lowAns || this.lowWhy; }
-};
-// Tikken tellen: alleen tikken binnen de app, alleen tijdens een lopende taak
-$('#app').addEventListener('pointerdown', () => { if (Test.running !== null) Test.taps++; }, true);
-
-const fmtRes = r => r ? `${num(r.secs)} s / ${r.taps} t` : '–';
-const fmtCounter = c => !c ? 'Nee' : c.secs === null ? 'Ja (taak 2 niet gestart)' : `Ja, na ${num(c.secs)} s`;
-const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-
-function renderPanel() {
-  const T = Test;
-  const rows = [...T.archive.map(r => ({ r, cur: false })), { r: T.record(), cur: true }];
-  $('#tpBody').innerHTML = `
-    <div class="tp-sec tp-row">
-      <div><label class="tp-lbl" for="tpCode">Deelnemercode</label><input class="tp-in" id="tpCode" value="${esc(T.code)}" placeholder="bijv. P1" autocomplete="off"></div>
-      <div><span class="tp-lbl">Startweergave</span><div class="tp-seg"><button data-tpview="lijst" class="${T.view === 'lijst' ? 'on' : ''}">Lijst</button><button data-tpview="kaart" class="${T.view === 'kaart' ? 'on' : ''}">Kaart</button></div></div>
-    </div>
-    <div class="tp-sec">
-      <span class="tp-lbl">Startscherm bij taak 1</span>
-      <div class="tp-seg"><button data-tpstart="melding" class="${T.startScreen === 'melding' ? 'on' : ''}">Pushmelding</button><button data-tpstart="ontdek" class="${T.startScreen === 'ontdek' ? 'on' : ''}">Ontdek (tijdlijn)</button></div>
-    </div>
-    <div class="tp-sec">
-      <span class="tp-lbl">Taken</span>
-      ${TASKS.map((t, i) => {
-        const run = T.running === i, r = T.res[i];
-        return `<div class="task ${run ? 'run' : r ? 'done' : ''}">
-          <div class="task-top"><span class="task-n">${i + 1}</span><div class="task-q">“${t.q}”<small>Meet: ${t.end}${i === 0 ? ' · zet de app bij start terug op het gekozen startscherm' : ''}</small></div></div>
-          <div class="task-act">
-            <span class="task-res" ${run ? 'id="live"' : ''}>${run ? 'loopt…' : r ? `✓ ${num(r.secs)} s · ${r.taps} tikken${r.found ? ' · ' + esc(r.found) : ''}` : 'Nog niet gestart'}</span>
-            ${run ? `<button class="sbtn red" data-tpstop>Stop</button>` : `<button class="sbtn ${r ? 'gh' : 'y'}" data-tptask="${i}" ${T.running !== null ? 'disabled style="opacity:.4"' : ''}>${r ? 'Opnieuw' : 'Start'}</button>`}
-          </div></div>`;
-      }).join('')}
-      <p class="tp-note">Het paneel sluit bij start. Tijd en tikken stoppen vanzelf. Tikken tellen alleen binnen de app.${T.planner ? ` Planner-knop ${T.planner}× gebruikt.` : ''}</p>
-      <p class="tp-note"><b>Tegenbod:</b> link “Ander tarief voorstellen” geopend: ${fmtCounter(T.counter)}${T.counter && T.counter.secs !== null ? ' (vanaf start taak 2)' : ''} · voorstel verstuurd: ${T.proposal ? euro(T.proposal) + '/u' : 'nee'}</p>
-    </div>
-    <div class="tp-sec">
-      <div class="q ${T.res[1] ? 'on' : ''}">
-        <p>“Stel dat je dit tarief te laag vindt. Wat doe je dan?”</p>
-        <div class="tp-seg">${['App', 'Bellen', 'WhatsApp', 'Niets'].map(a => `<button data-tplow="${a}" class="${T.lowAns === a ? 'on' : ''}">${a}</button>`).join('')}</div>
-        <textarea class="tp-ta" id="tpLowWhy" placeholder="Waarom?">${esc(T.lowWhy)}</textarea>
-      </div>
-      ${T.res[1] ? '' : '<p class="tp-note">Verschijnt na taak 2.</p>'}
-    </div>
-    <div class="tp-sec">
-      <div class="q ${T.res[2] ? 'on' : ''}">
-        <p>“Zou je deze dienst nu aannemen zonder een planner te bellen?”</p>
-        <div class="tp-seg">${['Ja', 'Nee', 'Twijfel'].map(a => `<button data-tpans="${a}" class="${T.answer === a ? 'on' : ''}">${a}</button>`).join('')}</div>
-        <textarea class="tp-ta" id="tpWhy" placeholder="Waarom? (opmerking)">${esc(T.why)}</textarea>
-      </div>
-      ${T.res[2] ? '' : '<p class="tp-note">Verschijnt na taak 3.</p>'}
-    </div>
-    <div class="tp-sec">
-      <div class="tp-actions">
-        <button class="sbtn gh" data-tpshow>${T.showResults ? 'Resultaten verbergen' : 'Resultaten tonen'}</button>
-        <button class="sbtn gh" data-tpcopy>Kopieer als tekst</button><span class="tp-copied" id="tpCopied"></span>
-      </div>
-      ${T.showResults ? `<div class="restbl"><table>
-        <thead><tr><th>Code</th><th>Weergave</th><th>Start</th><th>Taak 1</th><th>Taak 2</th><th>Tegenbod-link</th><th>Voorstel</th><th>Te laag: actie</th><th>Te laag: waarom</th><th>Taak 3</th><th>Antwoord</th><th>Opmerking</th></tr></thead>
-        <tbody>${rows.map(({ r, cur }) => `<tr class="${cur ? 'cur' : ''}"><td><b>${esc(r.code)}</b>${cur ? ' (nu)' : ''}</td><td>${r.view}</td><td>${r.start}</td>
-          <td>${fmtRes(r.res[0])}${r.res[0] && r.res[0].found ? '<br><small>' + esc(r.res[0].found) + '</small>' : ''}</td><td>${fmtRes(r.res[1])}</td><td>${fmtCounter(r.counter)}</td><td>${r.proposal ? euro(r.proposal) + '/u' : '–'}</td><td>${esc(r.lowAns || '–')}</td><td>${esc(r.lowWhy || '–')}</td><td>${fmtRes(r.res[2])}</td>
-          <td>${esc(r.answer || '–')}</td><td>${esc(r.why || '–')}${r.planner ? ` <small>(planner-knop ${r.planner}×)</small>` : ''}</td></tr>`).join('')}</tbody></table></div>` : ''}
-    </div>
-    <div class="tp-sec">
-      <button class="btn block" data-tpreset>Reset voor volgende deelnemer</button>
-      <p class="tp-note">Bewaart deze deelnemer in de tabel (alleen in het geheugen), zet de app terug op de pushmelding en zet de code klaar voor de volgende. Ververs je de pagina, dan is alles weg.</p>
-    </div>`;
-}
-function resultsText() {
-  const rows = [...Test.archive, Test.record()];
-  const head = ['Code', 'Weergave', 'Startscherm', 'T1 tijd (s)', 'T1 tikken', 'T1 gevonden', 'T2 tijd (s)', 'T2 tikken', 'T3 tijd (s)', 'T3 tikken', 'Antwoord', 'Opmerking', 'Planner-knop',
-    'Tegenbod-link geopend', 'Tegenbod-link na (s, vanaf start T2)', 'Voorstel verstuurd (€/u)', 'Te laag: actie', 'Te laag: waarom'];
-  const lines = rows.map(r => [r.code, r.view, r.start,
-    ...[0, 1, 2].flatMap(i => {
-      const x = r.res[i];
-      const base = [x ? num(x.secs) : '', x ? x.taps : ''];
-      return i === 0 ? [...base, x && x.found ? x.found : ''] : base;
-    }),
-    r.answer, (r.why || '').replace(/\s+/g, ' '), r.planner,
-    r.counter ? 'Ja' : 'Nee', r.counter && r.counter.secs !== null ? num(r.counter.secs) : '',
-    r.proposal ? num(r.proposal) : '', r.lowAns || '', (r.lowWhy || '').replace(/\s+/g, ' ')].join('\t'));
-  return [head.join('\t'), ...lines].join('\n');
-}
-function copyText(txt) {
-  const done = () => { const el = $('#tpCopied'); if (el) { el.textContent = 'Gekopieerd ✓'; setTimeout(() => el.textContent = '', 2000); } };
-  const fallback = () => {
-    const ta = document.createElement('textarea');
-    ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
-    document.body.appendChild(ta); ta.select();
-    try { document.execCommand('copy'); done(); } catch (e) { alert(txt); }
-    ta.remove();
-  };
-  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(txt).then(done, fallback);
-  else fallback();
-}
-function resetApp(full) {
-  closeSheet();
-  Object.assign(S, { stack: [], selDay: 0, view: Test.view, mapSel: null, favs: new Set(), applied: [], detailId: null,
-    detailTab: 'overzicht', extraSel: new Set(), entry: null, mineTab: 'aangemeld', plannerUsed: false, proposals: {}, proposeRate: 0 });
-  if (full) Object.assign(Test, { planner: 0, t2Start: null, counter: null, proposal: null });
-  renderDiscover(); renderMine();
-  $('#discScroll').scrollTop = 0;
-  if (S.current !== 'lock') go('lock', 'fade', false);
-  S.stack = [];
-  updateTabbar();
-}
-function nextCode(c) { const m = /^(.*?)(\d+)$/.exec(c || ''); return m ? m[1] + (+m[2] + 1) : c; }
-
-$('#tpBody').addEventListener('click', e => {
-  const el = e.target, T = Test;
-  const v = el.closest('[data-tpview]');
-  if (v) { T.view = v.dataset.tpview; S.view = T.view; S.mapSel = null; renderDiscover(); return renderPanel(); }
-  const st = el.closest('[data-tpstart]');
-  if (st) { T.startScreen = st.dataset.tpstart; return renderPanel(); }
-  const tk = el.closest('[data-tptask]');
-  if (tk && T.running === null) return T.start(+tk.dataset.tptask);
-  if (el.closest('[data-tpstop]')) return T.stop();
-  const an = el.closest('[data-tpans]');
-  if (an) { T.answer = T.answer === an.dataset.tpans ? '' : an.dataset.tpans; return renderPanel(); }
-  const lo = el.closest('[data-tplow]');
-  if (lo) { T.lowAns = T.lowAns === lo.dataset.tplow ? '' : lo.dataset.tplow; return renderPanel(); }
-  if (el.closest('[data-tpshow]')) { T.showResults = !T.showResults; return renderPanel(); }
-  if (el.closest('[data-tpcopy]')) return copyText(resultsText());
-  if (el.closest('[data-tpreset]')) {
-    if (T.hasData()) T.archive.push(T.record());
-    T.code = nextCode(T.code);
-    Object.assign(T, { running: null, res: [null, null, null], answer: '', why: '', planner: 0, lowAns: '', lowWhy: '' });
-    clearInterval(T.tick);
-    $('#gear').classList.remove('attn');
-    resetApp(true);
-    return renderPanel();
-  }
-});
-$('#tpBody').addEventListener('input', e => {
-  if (e.target.id === 'tpCode') Test.code = e.target.value.trim();
-  if (e.target.id === 'tpWhy') Test.why = e.target.value;
-  if (e.target.id === 'tpLowWhy') Test.lowWhy = e.target.value;
-});
-function openPanel() {
-  renderPanel();
-  $('#tpanel').classList.add('open'); $('#tpBg').classList.add('open');
-  $('#gear').classList.remove('attn');
-}
-function closePanel() { $('#tpanel').classList.remove('open'); $('#tpBg').classList.remove('open'); }
-$('#gear').addEventListener('click', () => $('#tpanel').classList.contains('open') ? closePanel() : openPanel());
-$('#tpClose').addEventListener('click', closePanel);
-$('#tpBg').addEventListener('click', closePanel);
-
-// Op mobiel: lang drukken op het logo opent de testmodus
-let lpTimer = null, lpFired = false;
-document.addEventListener('pointerdown', e => {
-  if (!e.target.closest('[data-logo]')) return;
-  lpFired = false;
-  lpTimer = setTimeout(() => {
-    lpFired = true;
-    if (Test.running !== null) Test.taps = Math.max(0, Test.taps - 1);
-    openPanel();
-  }, 700);
-});
-['pointerup', 'pointercancel', 'pointerleave', 'pointermove'].forEach(ev => document.addEventListener(ev, e => {
-  if (ev === 'pointermove' && Math.abs(e.movementX) + Math.abs(e.movementY) < 6) return;
-  clearTimeout(lpTimer);
-}));
-// Voorkom dat een lange druk op de melding ook de dienst opent
-document.addEventListener('click', e => { if (lpFired) { lpFired = false; e.stopPropagation(); e.preventDefault(); } }, true);
-document.addEventListener('contextmenu', e => { if (e.target.closest('[data-logo]')) e.preventDefault(); });
 
 /* =========================================================
    Start
