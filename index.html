@@ -322,6 +322,22 @@ details.why p{margin:0;padding:0 14px 14px;font-size:14px;line-height:1.45;color
 .done-card span{font-size:13px;color:var(--sub)}
 .paid{font-size:12px;font-weight:700;color:var(--green);display:flex;align-items:center;gap:4px;margin-top:3px}
 
+/* ---------- Tegenbod ---------- */
+.dbar-act{display:flex;flex-direction:column;align-items:center;gap:7px}
+.counter-link{font-size:13px;font-weight:600;color:#06438D;text-decoration:underline;text-underline-offset:3px}
+.counter-sent{font-size:12px;font-weight:700;color:var(--sub)}
+.dpane.has-counter{padding-bottom:200px}
+.sheet-x{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;background:#F0F2F5;color:var(--sub);display:grid;place-items:center}
+.sheet.dragging{transition:none}
+.stepper{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px 0 10px}
+.step{width:52px;height:52px;border-radius:50%;border:1.5px solid var(--primary);color:var(--primary);font-size:26px;font-weight:700;display:grid;place-items:center;flex:none}
+.step[disabled]{opacity:.3;cursor:default}
+.step-val{text-align:center}
+.step-val b{font-family:'Archivo Black',sans-serif;font-size:38px;font-weight:400;line-height:1}
+.step-val small{display:block;font-size:12.5px;color:var(--sub);font-weight:600;margin-top:4px}
+.sheet-note{font-size:13.5px;color:#333;line-height:1.45;background:#EEF3F8;border-radius:8px;padding:10px 12px;margin:0 0 16px}
+#scr-confirm h2.long{font-size:23px;line-height:1.15}
+
 /* ---------- Toast ---------- */
 .toast{position:absolute;left:50%;bottom:90px;transform:translate(-50%,20px);background:#032145;color:#fff;padding:11px 16px;border-radius:8px;font-size:14px;font-weight:600;z-index:40;opacity:0;pointer-events:none;transition:all .25s;max-width:86%;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
@@ -631,7 +647,7 @@ const SERVICES = [
     stats: { confirm: '3 uur', choose: 80, pay: 14 },
     why: 'Je doet bediening, woont binnen 15 km en hebt zaterdag als beschikbaar ingesteld.' },
 
-  { id: 'gooimeer', type: 'bar', name: 'Strandpaviljoen Gooimeer', initials: 'SG', city: 'Huizen', km: 14, day: 2,
+  { id: 'gooimeer', counter: true, type: 'bar', name: 'Strandpaviljoen Gooimeer', initials: 'SG', city: 'Huizen', km: 14, day: 2,
     start: '15:00', end: '23:00', pause: 30, rate: 22, match: false, spots: 2, applicants: 1,
     rating: 4.4, reviews: 17, extra: [], street: 'Strandweg 2, 1271 Huizen',
     dress: 'Dresscode: zwart', payout24: true,
@@ -651,7 +667,7 @@ const SERVICES = [
     stats: { confirm: '6 uur', choose: 75, pay: 21 },
     why: 'Je doet bediening en bent zaterdag beschikbaar. Maar je hebt aangegeven dat je liever avonddiensten draait.' },
 
-  { id: 'brink', type: 'kok', name: 'Eetcafé De Brink', initials: 'EB', city: 'Laren', km: 11, day: 3,
+  { id: 'brink', counter: true, type: 'kok', name: 'Eetcafé De Brink', initials: 'EB', city: 'Laren', km: 11, day: 3,
     start: '14:00', end: '22:00', pause: 30, rate: 24, match: false, spots: 1, applicants: 0,
     rating: 4.5, reviews: 19, extra: [], street: 'Brink 21, 1251 Laren',
     dress: 'Dresscode: koksbuis', payout24: true,
@@ -661,7 +677,7 @@ const SERVICES = [
     stats: { confirm: '2 uur', choose: 90, pay: 10 },
     why: 'Je bent zondag beschikbaar. Zelfstandig koken staat niet in je profiel.' },
 
-  { id: 'spieghel', type: 'receptie', name: 'Hotel Het Spieghel', initials: 'HS', city: 'Bussum', km: 8, day: 4,
+  { id: 'spieghel', counter: true, type: 'receptie', name: 'Hotel Het Spieghel', initials: 'HS', city: 'Bussum', km: 8, day: 4,
     start: '07:00', end: '15:00', pause: 30, rate: 18, match: false, spots: 1, applicants: 1,
     rating: 4.3, reviews: 9, extra: [{ day: 11, start: '07:00', end: '15:00' }], street: 'Spieghellaan 5, 1405 Bussum',
     dress: 'Dresscode: netjes', payout24: false,
@@ -701,7 +717,7 @@ const SERVICES = [
     stats: { confirm: '2 uur', choose: 85, pay: 14 },
     why: 'Je staat graag achter de bar, het is dicht bij huis en je bent zaterdagavond beschikbaar.' },
 
-  { id: 'zonnehoek', type: 'bediening', name: 'Landgoed Hoeve Zonnehoek', initials: 'HZ', city: 'Laren', km: 10, day: 10,
+  { id: 'zonnehoek', counter: true, type: 'bediening', name: 'Landgoed Hoeve Zonnehoek', initials: 'HZ', city: 'Laren', km: 10, day: 10,
     start: '12:00', end: '20:00', pause: 30, rate: 21, match: true, last: true, spots: 4, applicants: 3,
     rating: 4.8, reviews: 27, extra: [], street: 'Zonnehoekweg 1, 1251 Laren',
     dress: 'Dresscode: zwart', payout24: true,
@@ -723,7 +739,7 @@ const sortedServices = () => [...SERVICES].sort((a, b) => a.day - b.day || mins(
 const S = {
   current: 'lock', stack: [], selDay: 0, view: 'lijst', mapSel: null,
   favs: new Set(), applied: [], detailId: null, detailTab: 'overzicht', extraSel: new Set(),
-  entry: null, mineTab: 'aangemeld', plannerUsed: false
+  entry: null, mineTab: 'aangemeld', plannerUsed: false, proposals: {}, proposeRate: 0
 };
 
 /* =========================================================
@@ -796,6 +812,7 @@ function tileHTML(s, opts = {}) {
   const labels = [];
   if (s.match) labels.push('<span class="label y">Past bij jou</span>');
   if (s.extra.length) labels.push(`<span class="label g">+${s.extra.length} ${s.extra.length === 1 ? 'dag' : 'dagen'}</span>`);
+  if (s.counter) labels.push('<span class="label g">Tegenbod mogelijk</span>');
   if (s.last) labels.push('<span class="label r">Nog 1 plek</span>');
   return `<article class="tile" data-open="${s.id}">
     <div class="tile-img" style="background:${t.grad}">${decoCircles()}${typeSvg(t.icon)}
@@ -942,12 +959,17 @@ function renderDetail() {
     <div class="dtabs" id="dtabs">
       ${['overzicht', 'beschrijving', 'opdrachtgever'].map(k => `<button data-dtab="${k}" class="${S.detailTab === k ? 'on' : ''}">${k.toUpperCase()}</button>`).join('')}
     </div>
-    <div class="dpane" id="dpane">${detailPane(s)}</div>`;
+    <div class="dpane ${s.counter ? 'has-counter' : ''}" id="dpane">${detailPane(s)}</div>`;
   const sub = s.applicants === 0 ? `Nog niemand aangemeld · ${s.spots} ${s.spots === 1 ? 'plek' : 'plekken'}` : `${s.applicants} ${s.applicants === 1 ? 'aanmelding' : 'aanmeldingen'} voor ${s.spots} ${s.spots === 1 ? 'plek' : 'plekken'}`;
   $('#dbar').innerHTML = `
     <div class="dbar-row">
       <div class="p"><b>${euro(s.rate)}/u</b><span>Verdien ~ ${euro(earnOf(s))}</span></div>
-      ${applied ? `<button class="btn" disabled>${I.check} Aangemeld</button>` : `<button class="btn yellow" id="applyBtn">Aanmelden</button>`}
+      ${(() => {
+        const btn = applied ? `<button class="btn" disabled>${I.check} Aangemeld</button>` : `<button class="btn yellow" id="applyBtn">Aanmelden</button>`;
+        if (!s.counter) return btn;
+        const extra = S.proposals[s.id] ? `<span class="counter-sent">Voorstel verstuurd · ${euro(S.proposals[s.id])}/u</span>` : `<button class="counter-link" id="counterLink">Ander tarief voorstellen</button>`;
+        return `<div class="dbar-act">${btn}${extra}</div>`;
+      })()}
     </div>
     <div class="dbar-sub"><span>${applied ? 'Wacht op bevestiging van de zaak' : sub}</span><button class="link" data-toast="Berichten zijn niet onderdeel van deze demo">Vraag? Stuur de planner een bericht</button></div>`;
 }
@@ -1040,8 +1062,83 @@ function openSheet() {
 }
 function closeSheet() {
   $('#sheetBg').classList.remove('open');
-  $('#sheet').classList.remove('open');
+  const sh = $('#sheet');
+  sh.classList.remove('open', 'dragging');
+  sh.style.transform = '';
+  delete sh.dataset.kind;
 }
+
+/* Tegenbod: tarief voorstellen */
+const COUNTER_STEP = 0.5, COUNTER_MAX = 8;
+function openCounterSheet() {
+  const s = byId(S.detailId);
+  S.proposeRate = s.rate;
+  const sh = $('#sheet');
+  sh.dataset.kind = 'counter';
+  sh.innerHTML = `<div class="grab"></div>
+    <button class="sheet-x" id="sheetX" aria-label="Sluiten"><svg class="ico" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    <h2>Stel je tarief voor</h2>
+    <p class="sub">Huidig tarief: ${euro(s.rate)}/u</p>
+    <div class="stepper">
+      <button class="step" data-step="-1" aria-label="Lager">−</button>
+      <div class="step-val"><b id="propRate"></b><small>per uur</small></div>
+      <button class="step" data-step="1" aria-label="Hoger">+</button>
+    </div>
+    <div class="sumtotal"><span>Verdien ~</span><b id="propEarn"></b></div>
+    <p class="sheet-note">Heel normaal om te doen. De zaak ziet je voorstel en kan het accepteren of afwijzen. Je aanmelding blijft gewoon staan.</p>
+    <button class="btn block" id="sendProposal">Voorstel versturen</button>`;
+  updateCounterSheet();
+  $('#sheetBg').classList.add('open');
+  sh.classList.add('open');
+  Test.event('counterOpen', s);
+}
+function updateCounterSheet() {
+  const s = byId(S.detailId), r = S.proposeRate;
+  $('#propRate').textContent = euro(r);
+  $('#propEarn').textContent = euro(hoursOf(s) * r);
+  $('[data-step="-1"]').disabled = r <= s.rate;
+  $('[data-step="1"]').disabled = r >= s.rate + COUNTER_MAX;
+  $('#sendProposal').disabled = r <= s.rate;
+}
+function sendProposal() {
+  const s = byId(S.detailId), t = TYPES[s.type], r = S.proposeRate;
+  if (r <= s.rate) return;
+  S.proposals[s.id] = r;
+  if (!S.applied.includes(s.id)) S.applied.unshift(s.id);
+  closeSheet();
+  $('#scr-confirm').innerHTML = `
+    <div class="cf-top"><button class="roundbtn" data-back aria-label="Terug">${I.back}</button></div>
+    <div class="cf-check"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <h2 class="long">Je voorstel van <span style="text-transform:none">${euro(r)}/u</span> is verstuurd</h2>
+    <p class="lead">Je hoort het zodra de zaak heeft gereageerd.</p>
+    <div class="card cf-card"><div class="mi" style="background:${t.grad}">${typeSvg(t.icon, '')}</div>
+      <div><b>${s.name}</b><span>${t.label} · ${cap(fmtShort(s.day))} · ${s.start} – ${s.end}</span></div></div>
+    <button class="btn block" data-tab="mine">Naar mijn diensten</button>
+    <div class="demoinfo">Demo-info · Geregistreerd: tariefvoorstel via app (zonder planner)</div>`;
+  go('confirm', 'fade');
+  Test.event('proposal', s, r);
+}
+// Tegenbod-sheet sluiten door naar beneden te vegen
+let sheetDrag = null;
+$('#sheet').addEventListener('pointerdown', e => {
+  const sh = $('#sheet');
+  if (sh.dataset.kind !== 'counter' || e.target.closest('button')) return;
+  sheetDrag = { y: e.clientY, dy: 0 };
+  sh.classList.add('dragging');
+});
+document.addEventListener('pointermove', e => {
+  if (!sheetDrag) return;
+  sheetDrag.dy = Math.max(0, e.clientY - sheetDrag.y);
+  $('#sheet').style.transform = `translateY(${sheetDrag.dy}px)`;
+});
+['pointerup', 'pointercancel'].forEach(ev => document.addEventListener(ev, () => {
+  if (!sheetDrag) return;
+  const sh = $('#sheet'), far = sheetDrag.dy > 90;
+  sheetDrag = null;
+  sh.classList.remove('dragging');
+  sh.style.transform = '';
+  if (far) closeSheet();
+}));
 function confirmApply() {
   const s = byId(S.detailId), t = TYPES[s.type];
   const nDays = 1 + S.extraSel.size;
@@ -1069,7 +1166,7 @@ function renderMine() {
   const el = $('#mineList');
   if (S.mineTab === 'aangemeld') {
     el.innerHTML = S.applied.length
-      ? S.applied.map(id => tileHTML(byId(id), { status: 'Wacht op bevestiging', showDate: true })).join('')
+      ? S.applied.map(id => tileHTML(byId(id), { status: S.proposals[id] ? `Voorstel verstuurd · ${euro(S.proposals[id])}/u` : 'Wacht op bevestiging', showDate: true })).join('')
       : `<div class="empty"><div class="ei">${I.cal}</div><b>Nog geen aanmeldingen</b><p>Vind een dienst die bij je past en meld je aan.</p><button class="btn" data-tab="discover">Ontdek diensten</button></div>`;
   } else if (S.mineTab === 'bevestigd') {
     el.innerHTML = `<div class="empty"><div class="ei">${I.check}</div><b>Nog niks bevestigd</b><p>Zodra een zaak je kiest, zie je de dienst hier. Je krijgt dan ook een melding.</p></div>`;
@@ -1132,6 +1229,15 @@ $('#app').addEventListener('click', e => {
   if (mt) { S.mineTab = mt.dataset.mt; return renderMine(); }
   if (el.closest('#applyBtn')) { Test.event('apply'); return openSheet(); }
   if (el.closest('#confirmBtn')) return confirmApply();
+  if (el.closest('#counterLink')) return openCounterSheet();
+  const step = el.closest('[data-step]');
+  if (step) {
+    const s = byId(S.detailId);
+    S.proposeRate = Math.min(s.rate + COUNTER_MAX, Math.max(s.rate, S.proposeRate + COUNTER_STEP * +step.dataset.step));
+    return updateCounterSheet();
+  }
+  if (el.closest('#sendProposal')) return sendProposal();
+  if (el.closest('#sheetX')) return closeSheet();
   if (el.closest('#cancelSheet') || el.closest('#sheetBg')) return closeSheet();
   if (el.closest('#callPlanner')) { S.plannerUsed = true; Test.event('planner'); return toast('Demo: hier bel je de planner'); }
   if (el.closest('#notif')) return openDetail('lindehof', 'melding');
@@ -1158,9 +1264,12 @@ const Test = {
   code: 'P1', view: 'lijst', startScreen: 'melding',
   running: null, t0: 0, taps: 0, res: [null, null, null],
   answer: '', why: '', planner: 0, archive: [], showResults: false, tick: null,
+  t2Start: null, counter: null, proposal: null, lowAns: '', lowWhy: '',
 
-  event(type, s) {
+  event(type, s, rate) {
     if (type === 'planner') this.planner++;
+    if (type === 'counterOpen' && !this.counter) this.counter = { secs: this.t2Start ? (performance.now() - this.t2Start) / 1000 : null };
+    if (type === 'proposal') this.proposal = rate;
     if (type === 'detail' && this.running === 0) this.finish(0, s.name + (s.match ? '' : ' (past niet)'));
     if (type === 'apply' && this.running === 1) this.finish(1);
     if (type === 'confirmed' && this.running === 2) this.finish(2);
@@ -1171,6 +1280,7 @@ const Test = {
       if (this.startScreen === 'ontdek') { S.entry = 'ontdek'; goTab('discover'); }
     }
     this.running = i; this.t0 = performance.now(); this.taps = 0; this.res[i] = null;
+    if (i === 1) this.t2Start = this.t0;
     closePanel();
     clearInterval(this.tick);
     this.tick = setInterval(() => this.updateLive(), 200);
@@ -1190,14 +1300,16 @@ const Test = {
     if (el && this.running !== null) el.textContent = `loopt… ${num((performance.now() - this.t0) / 1000)} s · ${this.taps} tikken`;
   },
   record() {
-    return { code: this.code || '–', view: this.view, start: this.startScreen, res: this.res.slice(), answer: this.answer, why: this.why, planner: this.planner };
+    return { code: this.code || '–', view: this.view, start: this.startScreen, res: this.res.slice(), answer: this.answer, why: this.why, planner: this.planner,
+      counter: this.counter, proposal: this.proposal, lowAns: this.lowAns, lowWhy: this.lowWhy };
   },
-  hasData() { return this.res.some(Boolean) || this.answer || this.why; }
+  hasData() { return this.res.some(Boolean) || this.answer || this.why || this.counter || this.lowAns || this.lowWhy; }
 };
 // Tikken tellen: alleen tikken binnen de app, alleen tijdens een lopende taak
 $('#app').addEventListener('pointerdown', () => { if (Test.running !== null) Test.taps++; }, true);
 
 const fmtRes = r => r ? `${num(r.secs)} s / ${r.taps} t` : '–';
+const fmtCounter = c => !c ? 'Nee' : c.secs === null ? 'Ja (taak 2 niet gestart)' : `Ja, na ${num(c.secs)} s`;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 function renderPanel() {
@@ -1224,6 +1336,15 @@ function renderPanel() {
           </div></div>`;
       }).join('')}
       <p class="tp-note">Het paneel sluit bij start. Tijd en tikken stoppen vanzelf. Tikken tellen alleen binnen de app.${T.planner ? ` Planner-knop ${T.planner}× gebruikt.` : ''}</p>
+      <p class="tp-note"><b>Tegenbod:</b> link “Ander tarief voorstellen” geopend: ${fmtCounter(T.counter)}${T.counter && T.counter.secs !== null ? ' (vanaf start taak 2)' : ''} · voorstel verstuurd: ${T.proposal ? euro(T.proposal) + '/u' : 'nee'}</p>
+    </div>
+    <div class="tp-sec">
+      <div class="q ${T.res[1] ? 'on' : ''}">
+        <p>“Stel dat je dit tarief te laag vindt. Wat doe je dan?”</p>
+        <div class="tp-seg">${['App', 'Bellen', 'WhatsApp', 'Niets'].map(a => `<button data-tplow="${a}" class="${T.lowAns === a ? 'on' : ''}">${a}</button>`).join('')}</div>
+        <textarea class="tp-ta" id="tpLowWhy" placeholder="Waarom?">${esc(T.lowWhy)}</textarea>
+      </div>
+      ${T.res[1] ? '' : '<p class="tp-note">Verschijnt na taak 2.</p>'}
     </div>
     <div class="tp-sec">
       <div class="q ${T.res[2] ? 'on' : ''}">
@@ -1239,9 +1360,9 @@ function renderPanel() {
         <button class="sbtn gh" data-tpcopy>Kopieer als tekst</button><span class="tp-copied" id="tpCopied"></span>
       </div>
       ${T.showResults ? `<div class="restbl"><table>
-        <thead><tr><th>Code</th><th>Weergave</th><th>Start</th><th>Taak 1</th><th>Taak 2</th><th>Taak 3</th><th>Antwoord</th><th>Opmerking</th></tr></thead>
+        <thead><tr><th>Code</th><th>Weergave</th><th>Start</th><th>Taak 1</th><th>Taak 2</th><th>Tegenbod-link</th><th>Voorstel</th><th>Te laag: actie</th><th>Te laag: waarom</th><th>Taak 3</th><th>Antwoord</th><th>Opmerking</th></tr></thead>
         <tbody>${rows.map(({ r, cur }) => `<tr class="${cur ? 'cur' : ''}"><td><b>${esc(r.code)}</b>${cur ? ' (nu)' : ''}</td><td>${r.view}</td><td>${r.start}</td>
-          <td>${fmtRes(r.res[0])}${r.res[0] && r.res[0].found ? '<br><small>' + esc(r.res[0].found) + '</small>' : ''}</td><td>${fmtRes(r.res[1])}</td><td>${fmtRes(r.res[2])}</td>
+          <td>${fmtRes(r.res[0])}${r.res[0] && r.res[0].found ? '<br><small>' + esc(r.res[0].found) + '</small>' : ''}</td><td>${fmtRes(r.res[1])}</td><td>${fmtCounter(r.counter)}</td><td>${r.proposal ? euro(r.proposal) + '/u' : '–'}</td><td>${esc(r.lowAns || '–')}</td><td>${esc(r.lowWhy || '–')}</td><td>${fmtRes(r.res[2])}</td>
           <td>${esc(r.answer || '–')}</td><td>${esc(r.why || '–')}${r.planner ? ` <small>(planner-knop ${r.planner}×)</small>` : ''}</td></tr>`).join('')}</tbody></table></div>` : ''}
     </div>
     <div class="tp-sec">
@@ -1251,14 +1372,17 @@ function renderPanel() {
 }
 function resultsText() {
   const rows = [...Test.archive, Test.record()];
-  const head = ['Code', 'Weergave', 'Startscherm', 'T1 tijd (s)', 'T1 tikken', 'T1 gevonden', 'T2 tijd (s)', 'T2 tikken', 'T3 tijd (s)', 'T3 tikken', 'Antwoord', 'Opmerking', 'Planner-knop'];
+  const head = ['Code', 'Weergave', 'Startscherm', 'T1 tijd (s)', 'T1 tikken', 'T1 gevonden', 'T2 tijd (s)', 'T2 tikken', 'T3 tijd (s)', 'T3 tikken', 'Antwoord', 'Opmerking', 'Planner-knop',
+    'Tegenbod-link geopend', 'Tegenbod-link na (s, vanaf start T2)', 'Voorstel verstuurd (€/u)', 'Te laag: actie', 'Te laag: waarom'];
   const lines = rows.map(r => [r.code, r.view, r.start,
     ...[0, 1, 2].flatMap(i => {
       const x = r.res[i];
       const base = [x ? num(x.secs) : '', x ? x.taps : ''];
       return i === 0 ? [...base, x && x.found ? x.found : ''] : base;
     }),
-    r.answer, (r.why || '').replace(/\s+/g, ' '), r.planner].join('\t'));
+    r.answer, (r.why || '').replace(/\s+/g, ' '), r.planner,
+    r.counter ? 'Ja' : 'Nee', r.counter && r.counter.secs !== null ? num(r.counter.secs) : '',
+    r.proposal ? num(r.proposal) : '', r.lowAns || '', (r.lowWhy || '').replace(/\s+/g, ' ')].join('\t'));
   return [head.join('\t'), ...lines].join('\n');
 }
 function copyText(txt) {
@@ -1276,8 +1400,8 @@ function copyText(txt) {
 function resetApp(full) {
   closeSheet();
   Object.assign(S, { stack: [], selDay: 0, view: Test.view, mapSel: null, favs: new Set(), applied: [], detailId: null,
-    detailTab: 'overzicht', extraSel: new Set(), entry: null, mineTab: 'aangemeld', plannerUsed: false });
-  if (full) Test.planner = 0;
+    detailTab: 'overzicht', extraSel: new Set(), entry: null, mineTab: 'aangemeld', plannerUsed: false, proposals: {}, proposeRate: 0 });
+  if (full) Object.assign(Test, { planner: 0, t2Start: null, counter: null, proposal: null });
   renderDiscover(); renderMine();
   $('#discScroll').scrollTop = 0;
   if (S.current !== 'lock') go('lock', 'fade', false);
@@ -1297,12 +1421,14 @@ $('#tpBody').addEventListener('click', e => {
   if (el.closest('[data-tpstop]')) return T.stop();
   const an = el.closest('[data-tpans]');
   if (an) { T.answer = T.answer === an.dataset.tpans ? '' : an.dataset.tpans; return renderPanel(); }
+  const lo = el.closest('[data-tplow]');
+  if (lo) { T.lowAns = T.lowAns === lo.dataset.tplow ? '' : lo.dataset.tplow; return renderPanel(); }
   if (el.closest('[data-tpshow]')) { T.showResults = !T.showResults; return renderPanel(); }
   if (el.closest('[data-tpcopy]')) return copyText(resultsText());
   if (el.closest('[data-tpreset]')) {
     if (T.hasData()) T.archive.push(T.record());
     T.code = nextCode(T.code);
-    Object.assign(T, { running: null, res: [null, null, null], answer: '', why: '', planner: 0 });
+    Object.assign(T, { running: null, res: [null, null, null], answer: '', why: '', planner: 0, lowAns: '', lowWhy: '' });
     clearInterval(T.tick);
     $('#gear').classList.remove('attn');
     resetApp(true);
@@ -1312,6 +1438,7 @@ $('#tpBody').addEventListener('click', e => {
 $('#tpBody').addEventListener('input', e => {
   if (e.target.id === 'tpCode') Test.code = e.target.value.trim();
   if (e.target.id === 'tpWhy') Test.why = e.target.value;
+  if (e.target.id === 'tpLowWhy') Test.lowWhy = e.target.value;
 });
 function openPanel() {
   renderPanel();
