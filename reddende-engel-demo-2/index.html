@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Reddende Engel – conceptdemo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --grad-light:linear-gradient(210deg,#77B2BF 0%,#45729D 100%);
+  --grad-dark:linear-gradient(149deg,#032145 0%,#06438D 100%);
+  --primary:#2F5A8D; --secondary:#06438D; --yellow:#FFC107;
+  --text:#0A0A0A; --sub:#626262; --bg:#F8F8F8; --border:#E2E2E2;
+  --red:#D2373C; --green:#1E8E5A;
+  --shadow:0 2px 10px rgba(3,33,69,.08),0 1px 3px rgba(3,33,69,.06);
+  --bar-h:30px; --tab-h:64px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:'Archivo',system-ui,sans-serif;color:var(--text);background:var(--grad-light);background-attachment:fixed;overflow:hidden}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+h1,h2,h3,.head{font-family:'Archivo Black','Archivo',sans-serif;text-transform:uppercase;font-weight:400;letter-spacing:.01em;margin:0}
+svg{display:block}
+
+/* ---------- Demo-balk + stage ---------- */
+.demobar{position:fixed;top:0;left:0;right:0;height:var(--bar-h);z-index:100;background:#032145;color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;letter-spacing:.02em}
+.demobar b{color:var(--yellow);margin-right:6px}
+.stage{position:fixed;top:var(--bar-h);left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:40px;padding:24px}
+.side{justify-self:end;max-width:300px;color:#fff}
+.side .head{font-size:30px;line-height:1.05;margin-bottom:14px}
+.side p{font-size:15px;line-height:1.5;margin:0 0 10px;opacity:.95}
+.side .small{font-size:13px;opacity:.8}
+.gearcol{justify-self:start}
+.gear{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.95);box-shadow:var(--shadow);display:grid;place-items:center;color:var(--secondary);position:relative}
+.gear:hover{transform:rotate(30deg);transition:transform .3s}
+.gear .dot{position:absolute;top:2px;right:2px;width:12px;height:12px;border-radius:50%;background:var(--yellow);border:2px solid #fff;display:none}
+.gear.attn .dot{display:block}
+.gearlabel{color:#fff;font-size:12px;font-weight:600;margin-top:6px;text-align:center;opacity:.85}
+
+#app{position:relative;width:430px;height:min(900px,calc(100vh - var(--bar-h) - 48px));background:var(--bg);border-radius:30px;overflow:hidden;overflow:clip;box-shadow:0 30px 80px rgba(3,33,69,.45),0 0 0 8px rgba(255,255,255,.18)}
+@media (max-width:1000px){.side{display:none}.stage{grid-template-columns:1fr auto 1fr;gap:20px}}
+@media (max-width:600px){
+  .stage{display:block;padding:0}
+  .gearcol,.side{display:none}
+  #app{width:100%;height:calc(100vh - var(--bar-h));height:calc(100dvh - var(--bar-h));border-radius:0;box-shadow:none}
+  .demobar{font-size:11px}
+}
+
+/* ---------- Schermen ---------- */
+.screen{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg);z-index:1}
+.screen.active{display:flex}
+.screen.tabbed{bottom:var(--tab-h)}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.in-fwd{animation:inFwd .32s cubic-bezier(.2,.8,.2,1) both;z-index:3}
+.out-fwd{animation:outFwd .32s ease both;z-index:2}
+.in-back{animation:inBack .32s cubic-bezier(.2,.8,.2,1) both;z-index:2}
+.out-back{animation:outBack .32s ease both;z-index:3}
+.in-fade{animation:inFade .25s ease both;z-index:3}
+.out-fade{animation:outFade .2s ease both;z-index:2}
+@keyframes inFwd{from{transform:translateX(100%)}to{transform:none}}
+@keyframes outFwd{to{transform:translateX(-25%);opacity:.5}}
+@keyframes inBack{from{transform:translateX(-25%);opacity:.5}to{transform:none;opacity:1}}
+@keyframes outBack{to{transform:translateX(100%)}}
+@keyframes inFade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes outFade{to{opacity:0}}
+
+/* ---------- Algemene UI ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 20px;border-radius:5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;font-size:15px;background:var(--primary);color:#fff;transition:transform .1s,filter .15s}
+.btn:active{transform:scale(.97)}
+.btn.yellow{background:var(--yellow);color:#0A0A0A}
+.btn.ghost{background:#fff;color:var(--secondary);border:1.5px solid var(--secondary)}
+.btn.block{width:100%}
+.btn[disabled]{background:#DDE6EF;color:var(--primary);cursor:default}
+.link{color:var(--secondary);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.card{background:#fff;border-radius:12px;box-shadow:var(--shadow)}
+.label{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:4px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.label.y{background:var(--yellow);color:#0A0A0A}
+.label.g{background:#ECEEF0;color:#4A4A4A}
+.label.r{background:#FDE7E8;color:var(--red)}
+.ico{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.roundbtn{width:40px;height:40px;border-radius:50%;background:#fff;display:grid;place-items:center;color:var(--secondary);box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.iconbtn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;background:rgba(255,255,255,.18)}
+.heart.on .ico{fill:var(--red);stroke:var(--red)}
+
+/* Logo */
+.logo{display:flex;align-items:center;gap:8px;color:#fff;font-family:'Archivo Black',sans-serif;font-size:16px;letter-spacing:.02em;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.logo svg{width:38px;height:22px}
+
+/* ---------- Scherm 0: lockscreen ---------- */
+#scr-lock{background:var(--grad-dark);color:#fff;align-items:center;padding:24px 16px}
+.lock-status{width:100%;display:flex;justify-content:space-between;font-size:13px;font-weight:600;opacity:.9;padding:0 8px}
+.lock-time{font-family:'Archivo',sans-serif;font-weight:700;font-size:84px;letter-spacing:-.02em;margin-top:44px;line-height:1}
+.lock-date{font-size:17px;font-weight:600;opacity:.85;margin-top:6px}
+.notif{margin-top:48px;width:100%;text-align:left;background:rgba(255,255,255,.9);color:#0A0A0A;border-radius:18px;padding:12px 14px;backdrop-filter:blur(14px);box-shadow:0 10px 30px rgba(0,0,0,.25);animation:notifIn .6s .3s cubic-bezier(.2,.9,.3,1.2) both}
+.notif:active{transform:scale(.98)}
+@keyframes notifIn{from{opacity:0;transform:translateY(-20px) scale(.95)}}
+.notif-top{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#4a4a4a;letter-spacing:.03em}
+.notif-top .appicon{width:22px;height:22px;border-radius:6px;background:var(--grad-dark);display:grid;place-items:center}
+.notif-top .appicon svg{width:16px;height:10px}
+.notif-top .now{margin-left:auto;font-weight:400;color:#777;letter-spacing:0}
+.notif-title{font-weight:700;font-size:15.5px;margin:8px 0 3px}
+.notif-body{font-size:14px;line-height:1.35;color:#2a2a2a}
+.lock-hint{margin-top:16px;font-size:13px;opacity:.7;display:flex;align-items:center;gap:6px}
+.lock-bottom{margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:18px}
+.lock-skip{color:#fff;font-size:14px;font-weight:600;text-decoration:underline;text-underline-offset:3px;opacity:.85}
+.homebar{width:130px;height:5px;border-radius:3px;background:rgba(255,255,255,.7)}
+
+/* ---------- Scherm 1: Ontdek ---------- */
+.hdr{background:var(--grad-light);color:#fff;padding:16px 16px 22px}
+.hdr-top{display:flex;align-items:center;justify-content:space-between}
+.hdr-icons{display:flex;gap:8px}
+.hdr h1{font-size:28px;margin-top:20px;line-height:1}
+.hdr p{margin:6px 0 0;font-size:14px;opacity:.95}
+.chips{display:flex;gap:8px;padding:12px 16px 4px;overflow-x:auto;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;height:34px;padding:0 12px;border-radius:17px;border:1.5px solid var(--border);background:#fff;font-size:13.5px;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:var(--text)}
+.chip .ico{width:14px;height:14px}
+.sticky{position:sticky;top:0;z-index:5;background:var(--bg);padding-top:8px;box-shadow:0 6px 10px -8px rgba(0,0,0,.15)}
+.daystrip{display:flex;gap:6px;overflow-x:auto;padding:4px 16px 10px;scroll-snap-type:x proximity;scrollbar-width:none}
+.daystrip::-webkit-scrollbar{display:none}
+.day{flex:none;width:48px;height:62px;border-radius:10px;background:#fff;border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;scroll-snap-align:start;position:relative;transition:background .15s}
+.day .dn{font-size:11px;font-weight:700;color:var(--sub);letter-spacing:.04em}
+.day .dd{font-size:18px;font-weight:700}
+.day .dot{width:5px;height:5px;border-radius:50%;background:var(--primary);position:absolute;bottom:7px}
+.day.sel{background:var(--primary);border-color:var(--primary);color:#fff}
+.day.sel .dn{color:rgba(255,255,255,.8)}
+.day.sel .dot{background:var(--yellow)}
+.tl-head{display:flex;align-items:center;justify-content:space-between;padding:4px 16px 10px}
+.tl-head .t{font-size:13px;font-weight:700;color:var(--sub)}
+.seg{display:inline-flex;background:#E9EEF3;border-radius:6px;padding:3px}
+.seg button{height:28px;padding:0 12px;border-radius:4px;font-size:13px;font-weight:700;color:var(--sub);display:inline-flex;align-items:center;gap:5px}
+.seg button .ico{width:15px;height:15px}
+.seg button.on{background:#fff;color:var(--secondary);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.list{padding:4px 16px 24px}
+.dayhead{font-size:15px;font-weight:700;margin:18px 0 10px;display:flex;align-items:baseline;gap:8px}
+.dayhead small{font-size:12.5px;font-weight:600;color:var(--sub)}
+.dayhead:first-child{margin-top:6px}
+
+/* Tegel */
+.tile{background:#fff;border-radius:12px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px;cursor:pointer;transition:transform .12s}
+.tile:active{transform:scale(.985)}
+.tile-img{height:140px;position:relative;overflow:hidden;display:grid;place-items:center}
+.tile-img .deco{position:absolute;border-radius:50%;background:rgba(255,255,255,.08)}
+.tile-img .bigicon{width:76px;height:76px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.95;position:relative}
+.bizlogo{position:absolute;top:12px;right:12px;width:42px;height:42px;border-radius:8px;background:#fff;display:grid;place-items:center;font-family:'Archivo Black',sans-serif;font-size:15px;color:var(--secondary);box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.status-badge{position:absolute;left:12px;top:12px;background:#fff;color:#8A5A00;font-size:12px;font-weight:700;padding:5px 9px;border-radius:5px;display:flex;align-items:center;gap:6px}
+.status-badge i{width:8px;height:8px;border-radius:50%;background:#F0A500;display:block}
+.tile-body{padding:12px 14px 14px;position:relative}
+.tile .type{color:var(--primary);font-size:12.5px;font-weight:700}
+.tile .name{font-weight:700;font-size:17px;margin:2px 0 6px;padding-right:34px}
+.meta{display:flex;align-items:center;gap:6px;font-size:13.5px;color:var(--sub);margin-top:3px}
+.meta .ico{width:15px;height:15px}
+.tile .heart{position:absolute;top:8px;right:8px;width:36px;height:36px;display:grid;place-items:center;color:var(--sub)}
+.tile .heart .ico{width:22px;height:22px}
+.tile-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:10px}
+.labels{display:flex;flex-wrap:wrap;gap:5px}
+.price{text-align:right;flex:none}
+.rate{display:inline-block;background:var(--yellow);color:#0A0A0A;font-weight:700;font-size:14.5px;padding:4px 8px;border-radius:5px}
+.price small{display:block;font-size:12px;color:var(--sub);margin-top:4px;font-weight:600}
+
+/* Kaart */
+.mapwrap{margin:4px 16px 24px;position:relative;border-radius:12px;overflow:hidden;box-shadow:var(--shadow);background:#EAF1F3;aspect-ratio:400/440}
+.mapwrap>svg{width:100%;height:100%}
+.minitile .go .ico{width:22px;height:22px}
+.pin{position:absolute;transform:translate(-50%,-100%);background:var(--secondary);color:#fff;font-weight:700;font-size:12.5px;padding:4px 7px;border-radius:6px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.25);z-index:2;transition:transform .15s,background .15s}
+.pin:after{content:"";position:absolute;left:50%;bottom:-5px;margin-left:-5px;border:5px solid transparent;border-bottom:0;border-top-color:inherit;border-top-color:var(--secondary)}
+.pin.match{background:var(--yellow);color:#0A0A0A}
+.pin.match:after{border-top-color:var(--yellow)}
+.pin.on{transform:translate(-50%,-100%) scale(1.15);z-index:3;background:#032145;color:#fff}
+.pin.on:after{border-top-color:#032145}
+.me{position:absolute;width:16px;height:16px;border-radius:50%;background:#1A73E8;border:3px solid #fff;transform:translate(-50%,-50%);box-shadow:0 0 0 0 rgba(26,115,232,.5);animation:pulse 2s infinite}
+.me-label{position:absolute;transform:translate(-50%,8px);font-size:11px;font-weight:700;color:#1A73E8;background:#fff;padding:1px 5px;border-radius:4px}
+@keyframes pulse{70%{box-shadow:0 0 0 14px rgba(26,115,232,0)}100%{box-shadow:0 0 0 0 rgba(26,115,232,0)}}
+.minitile{position:absolute;left:10px;right:10px;bottom:10px;z-index:4;display:flex;gap:12px;align-items:center;padding:10px;background:#fff;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.2);cursor:pointer;animation:inFade .2s ease both}
+.minitile .mi{width:64px;height:64px;border-radius:8px;flex:none;display:grid;place-items:center}
+.minitile .mi svg{width:36px;height:36px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.minitile .tx{flex:1;min-width:0}
+.minitile .tx b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.minitile .tx span{font-size:12.5px;color:var(--sub);display:block}
+.minitile .go{color:var(--secondary)}
+.maphint{position:absolute;top:10px;left:10px;right:10px;text-align:center;font-size:12px;font-weight:600;color:var(--sub);background:rgba(255,255,255,.9);border-radius:6px;padding:5px;z-index:3}
+
+/* ---------- Tabbalk ---------- */
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:var(--tab-h);background:#fff;border-top:1px solid var(--border);display:flex;z-index:10;transition:transform .25s}
+.tabbar.hide{transform:translateY(110%)}
+.tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:600;color:#8A8A8A;position:relative}
+.tabbar button .ico{width:23px;height:23px}
+.tabbar button.on{color:var(--secondary)}
+.tabbar button.on:before{content:"";position:absolute;top:0;width:32px;height:3px;border-radius:0 0 3px 3px;background:var(--secondary)}
+.tabbar .badge{position:absolute;top:8px;left:calc(50% + 6px);min-width:17px;height:17px;border-radius:9px;background:var(--yellow);color:#0A0A0A;font-size:10.5px;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 4px}
+.tabbar .badge.show{display:flex}
+
+/* ---------- Scherm 2: detail ---------- */
+.hero{height:230px;position:relative;display:grid;place-items:center;overflow:hidden;flex:none}
+.hero .bigicon{width:104px;height:104px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;position:relative}
+.hero .deco{position:absolute;border-radius:50%;background:rgba(255,255,255,.08)}
+.hero-btns{position:absolute;top:14px;left:14px;right:14px;display:flex;justify-content:space-between;z-index:2}
+.hero-btns .r{display:flex;gap:8px}
+.hero .bizlogo{top:auto;bottom:14px;right:14px;width:52px;height:52px;font-size:18px}
+.d-head{padding:16px 16px 4px;background:#fff}
+.d-head .type{color:var(--primary);font-weight:700;font-size:13.5px}
+.d-head h2{font-size:24px;line-height:1.1;margin:6px 0 8px}
+.stars{display:flex;align-items:center;gap:6px;font-size:13.5px;color:var(--sub)}
+.stars b{color:var(--text)}
+.stars .st{color:#F2A900;letter-spacing:1px;font-size:14px}
+.dtabs{display:flex;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:4;padding:0 8px}
+.dtabs button{flex:1;height:46px;font-size:12px;font-weight:700;letter-spacing:.02em;padding:0 4px;color:var(--sub);position:relative}
+.dtabs button.on{color:var(--secondary)}
+.dtabs button.on:after{content:"";position:absolute;left:14%;right:14%;bottom:-1px;height:3px;border-radius:3px 3px 0 0;background:var(--secondary)}
+.dpane{padding:14px 16px 170px;animation:inFade .2s ease both}
+.sect{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:14px;margin-bottom:12px}
+.sect h3{font-size:13.5px;margin-bottom:10px;color:var(--secondary);letter-spacing:.03em}
+.when{display:flex;gap:12px;align-items:center}
+.when .cal{width:52px;height:56px;border-radius:8px;background:var(--grad-dark);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none}
+.when .cal small{font-size:11px;font-weight:700;opacity:.85;text-transform:uppercase}
+.when .cal b{font-size:21px;line-height:1}
+.when .wt b{display:block;font-size:16px}
+.when .wt span{font-size:14px;color:var(--sub)}
+.extra{margin-top:14px;padding-top:12px;border-top:1px dashed var(--border)}
+.extra p{margin:0 0 8px;font-size:13.5px;font-weight:700}
+.chk{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:14px;cursor:pointer}
+.chk input{width:20px;height:20px;accent-color:var(--primary);margin:0}
+.chk span{color:var(--sub);margin-left:auto;font-size:13px}
+.dchips{display:flex;flex-wrap:wrap;gap:6px}
+.dchip{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:6px;background:#EEF3F8;color:var(--secondary);font-size:12.5px;font-weight:700}
+.dchip .ico{width:14px;height:14px}
+.earn{background:var(--grad-dark);color:#fff;border-radius:12px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden}
+.earn h3{color:rgba(255,255,255,.8);font-size:12.5px;margin:0 0 6px}
+.earn .big{font-family:'Archivo Black',sans-serif;font-size:36px;line-height:1.05}
+.earn p{margin:6px 0 0;font-size:13.5px;opacity:.85}
+.earn .tag{position:absolute;right:14px;top:14px}
+.dmap{border-radius:8px;overflow:hidden;background:#EAF1F3;height:130px;position:relative}
+.dmap svg{width:100%;height:100%}
+.addr{display:flex;gap:8px;margin-top:10px;font-size:14px}
+.addr .ico{color:var(--secondary);flex:none;margin-top:1px}
+.travel{display:flex;margin-top:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.travel div{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 4px;font-size:12px;color:var(--sub);border-right:1px solid var(--border)}
+.travel div:last-child{border-right:0}
+.travel b{color:var(--text);font-size:14px}
+.travel .ico{color:var(--secondary)}
+details.why{background:#fff;border-radius:12px;box-shadow:var(--shadow);margin-bottom:12px}
+details.why summary{list-style:none;padding:14px;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:var(--secondary);cursor:pointer}
+details.why summary::-webkit-details-marker{display:none}
+details.why summary .chev{margin-left:auto;transition:transform .2s}
+details.why[open] summary .chev{transform:rotate(180deg)}
+details.why p{margin:0;padding:0 14px 14px;font-size:14px;line-height:1.45;color:#333}
+.planner{background:var(--grad-dark);color:#fff;border-radius:12px;padding:16px;margin-bottom:12px}
+.planner b{display:block;font-size:16px;margin-bottom:4px}
+.planner p{margin:0 0 12px;font-size:13.5px;opacity:.85}
+.planner .btn{background:#fff;color:var(--secondary)}
+.prose h3{margin-top:2px}
+.prose p{margin:0;font-size:14.5px;line-height:1.5;color:#2a2a2a}
+.prose ul{margin:0;padding:0;list-style:none}
+.prose li{position:relative;padding:5px 0 5px 24px;font-size:14.5px;line-height:1.4}
+.prose li:before{content:"";position:absolute;left:4px;top:11px;width:8px;height:8px;border-radius:2px;background:var(--yellow)}
+.facts{padding:4px 14px}
+.fact{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);font-size:14px;line-height:1.35}
+.fact:last-child{border:0}
+.fact .fi{width:38px;height:38px;border-radius:50%;background:#EEF3F8;color:var(--secondary);display:grid;place-items:center;flex:none}
+.fact b{font-size:15px}
+.dbar{position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--border);padding:12px 16px 14px;z-index:6;box-shadow:0 -6px 18px rgba(0,0,0,.06)}
+.dbar-row{display:flex;align-items:center;gap:12px}
+.dbar .p{flex:1}
+.dbar .p b{font-size:19px;display:block}
+.dbar .p span{font-size:13px;color:var(--sub);font-weight:600}
+.dbar .btn{height:52px;padding:0 26px;font-size:16px}
+.dbar-sub{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:12.5px;color:var(--sub)}
+.dbar-sub .link{font-size:12.5px}
+
+/* ---------- Bottom sheet ---------- */
+.sheet-bg{position:absolute;inset:0;background:rgba(3,33,69,.45);z-index:20;opacity:0;pointer-events:none;transition:opacity .25s}
+.sheet-bg.open{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:21;background:#fff;border-radius:18px 18px 0 0;padding:10px 18px 22px;transform:translateY(105%);transition:transform .3s cubic-bezier(.2,.8,.2,1);max-height:88%;overflow:auto}
+.sheet.open{transform:none}
+.grab{width:44px;height:5px;border-radius:3px;background:#D5D5D5;margin:0 auto 14px}
+.sheet h2{font-size:20px;margin-bottom:4px}
+.sheet .sub{font-size:14px;color:var(--sub);margin:0 0 14px}
+.sumrow{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:14.5px}
+.sumrow span{color:var(--sub)}
+.sumrow b{text-align:right}
+.sumtotal{display:flex;justify-content:space-between;align-items:center;background:#FFF6D9;border-radius:8px;padding:12px;margin:14px 0}
+.sumtotal b{font-family:'Archivo Black',sans-serif;font-size:22px}
+.sheet .cancel{display:block;margin:12px auto 0;color:var(--sub);font-weight:600;font-size:14px}
+
+/* ---------- Bevestiging ---------- */
+#scr-confirm{background:#fff;align-items:center;text-align:center;padding:24px}
+.cf-top{width:100%;display:flex;justify-content:flex-start}
+.cf-check{width:116px;height:116px;border-radius:50%;background:var(--yellow);display:grid;place-items:center;margin-top:60px;animation:pop .5s cubic-bezier(.2,.9,.3,1.4) both}
+.cf-check svg{width:60px;height:60px;stroke:#0A0A0A;stroke-width:3.2;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:60;stroke-dashoffset:60;animation:draw .45s .3s ease forwards}
+@keyframes pop{from{transform:scale(.3);opacity:0}}
+@keyframes draw{to{stroke-dashoffset:0}}
+#scr-confirm h2{font-size:28px;margin:28px 0 10px}
+#scr-confirm .lead{font-size:16px;line-height:1.5;color:#333;margin:0 0 20px;max-width:320px}
+.cf-card{width:100%;text-align:left;padding:14px;margin-bottom:22px;display:flex;gap:12px;align-items:center}
+.cf-card .mi{width:52px;height:52px;border-radius:8px;display:grid;place-items:center;flex:none}
+.cf-card .mi svg{width:30px;height:30px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.cf-card b{display:block;font-size:15.5px}
+.cf-card span{font-size:13px;color:var(--sub)}
+.demoinfo{margin-top:auto;font-size:11.5px;color:#9A9A9A;line-height:1.4;padding-top:16px}
+
+/* ---------- Subheader + Mijn diensten ---------- */
+.subhdr{background:var(--grad-light);color:#fff;padding:14px 16px 16px}
+.subhdr-row{display:flex;align-items:center;gap:10px}
+.subhdr h1{font-size:22px}
+.mtabs{display:flex;background:rgba(255,255,255,.2);border-radius:6px;padding:3px;margin-top:14px}
+.mtabs button{flex:1;height:34px;border-radius:4px;font-weight:700;font-size:13.5px;color:#fff}
+.mtabs button.on{background:#fff;color:var(--secondary)}
+.empty{text-align:center;padding:50px 24px;color:var(--sub)}
+.empty .ei{width:72px;height:72px;border-radius:50%;background:#E9EEF3;color:var(--primary);display:grid;place-items:center;margin:0 auto 14px}
+.empty .ei .ico{width:32px;height:32px}
+.empty b{display:block;color:var(--text);font-size:17px;margin-bottom:6px}
+.empty p{margin:0 0 18px;font-size:14px;line-height:1.45}
+.done-card{padding:14px;display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.done-card .mi{width:52px;height:52px;border-radius:8px;display:grid;place-items:center;flex:none}
+.done-card .mi svg{width:30px;height:30px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.done-card .tx{flex:1}
+.done-card b{display:block}
+.done-card span{font-size:13px;color:var(--sub)}
+.paid{font-size:12px;font-weight:700;color:var(--green);display:flex;align-items:center;gap:4px;margin-top:3px}
+
+/* ---------- Tegenbod ---------- */
+.dbar-act{display:flex;flex-direction:column;align-items:center;gap:7px}
+.counter-link{font-size:13px;font-weight:600;color:#06438D;text-decoration:underline;text-underline-offset:3px}
+.counter-sent{font-size:12px;font-weight:700;color:var(--sub)}
+.dpane.has-counter{padding-bottom:200px}
+.sheet-x{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;background:#F0F2F5;color:var(--sub);display:grid;place-items:center}
+.sheet.dragging{transition:none}
+.stepper{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px 0 10px}
+.step{width:52px;height:52px;border-radius:50%;border:1.5px solid var(--primary);color:var(--primary);font-size:26px;font-weight:700;display:grid;place-items:center;flex:none}
+.step[disabled]{opacity:.3;cursor:default}
+.step-val{text-align:center}
+.step-val b{font-family:'Archivo Black',sans-serif;font-size:38px;font-weight:400;line-height:1}
+.step-val small{display:block;font-size:12.5px;color:var(--sub);font-weight:600;margin-top:4px}
+.sheet-note{font-size:13.5px;color:#333;line-height:1.45;background:#EEF3F8;border-radius:8px;padding:10px 12px;margin:0 0 16px}
+#scr-confirm h2.long{font-size:23px;line-height:1.15}
+
+/* ---------- Toast ---------- */
+.toast{position:absolute;left:50%;bottom:90px;transform:translate(-50%,20px);background:#032145;color:#fff;padding:11px 16px;border-radius:8px;font-size:14px;font-weight:600;z-index:40;opacity:0;pointer-events:none;transition:all .25s;max-width:86%;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- Testmodus ---------- */
+.tp-bg{position:fixed;inset:0;background:rgba(3,33,69,.35);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s}
+.tp-bg.open{opacity:1;pointer-events:auto}
+.tpanel{position:fixed;top:calc(var(--bar-h) + 12px);right:12px;bottom:12px;width:400px;max-width:calc(100% - 24px);background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.35);z-index:201;transform:translateX(110%);transition:transform .3s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;font-size:14px}
+.tpanel.open{transform:none}
+@media (max-width:600px){.tpanel{top:var(--bar-h);right:0;bottom:0;width:100%;max-width:100%;border-radius:0}}
+.tp-h{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--grad-dark);color:#fff;border-radius:14px 14px 0 0}
+@media (max-width:600px){.tp-h{border-radius:0}}
+.tp-h h2{font-size:16px}
+.tp-h small{display:block;font-size:11.5px;opacity:.8;font-family:'Archivo',sans-serif;text-transform:none;margin-top:2px}
+.tp-b{flex:1;overflow:auto;padding:14px 16px 20px}
+.tp-sec{margin-bottom:18px}
+.tp-sec>label,.tp-lbl{display:block;font-size:11.5px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.tp-row{display:flex;gap:10px;align-items:flex-end}
+.tp-row>div{flex:1}
+.tp-in{width:100%;height:38px;border:1.5px solid var(--border);border-radius:6px;padding:0 10px;font:inherit;font-weight:700;font-size:15px}
+.tp-in:focus,.tp-ta:focus{outline:none;border-color:var(--primary)}
+.tp-seg{display:flex;border:1.5px solid var(--border);border-radius:6px;overflow:hidden;height:38px}
+.tp-seg button{flex:1;font-size:13px;font-weight:700;color:var(--sub)}
+.tp-seg button.on{background:var(--primary);color:#fff}
+.task{border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;transition:border-color .2s,background .2s}
+.task.run{border-color:var(--yellow);background:#FFFBEA}
+.task.done{border-color:#BFE3CF;background:#F3FBF6}
+.task-top{display:flex;gap:10px;align-items:flex-start}
+.task-n{width:24px;height:24px;border-radius:50%;background:var(--secondary);color:#fff;font-weight:700;font-size:13px;display:grid;place-items:center;flex:none}
+.task-q{flex:1;font-weight:600;line-height:1.35}
+.task-q small{display:block;font-weight:400;color:var(--sub);font-size:12px;margin-top:2px}
+.task-act{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-left:34px}
+.task-res{font-size:13px;color:var(--sub);font-weight:600}
+.task.run .task-res{color:#8A5A00}
+.task.done .task-res{color:var(--green)}
+.sbtn{height:32px;padding:0 14px;border-radius:5px;background:var(--primary);color:#fff;font-weight:700;font-size:12.5px;text-transform:uppercase;letter-spacing:.04em}
+.sbtn.y{background:var(--yellow);color:#0A0A0A}
+.sbtn.gh{background:#fff;color:var(--secondary);border:1.5px solid var(--secondary)}
+.sbtn.red{background:#fff;color:var(--red);border:1.5px solid var(--red)}
+.q{border-radius:10px;background:#EEF3F8;padding:12px;opacity:.55;pointer-events:none;transition:opacity .2s}
+.q.on{opacity:1;pointer-events:auto;background:#FFF6D9;box-shadow:0 0 0 2px var(--yellow)}
+.q p{margin:0 0 10px;font-weight:700;line-height:1.35}
+.q .tp-seg{background:#fff;margin-bottom:8px}
+.tp-ta{width:100%;min-height:60px;border:1.5px solid var(--border);border-radius:6px;padding:8px 10px;font:inherit;resize:vertical}
+.tp-actions{display:flex;flex-wrap:wrap;gap:8px}
+.restbl{margin-top:12px;overflow-x:auto;border:1px solid var(--border);border-radius:8px}
+.restbl table{border-collapse:collapse;width:100%;font-size:12px;min-width:560px}
+.restbl th,.restbl td{padding:6px 8px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+.restbl th{background:#F2F5F8;font-weight:700;white-space:nowrap}
+.restbl tr.cur td{background:#FFFBEA}
+.tp-note{font-size:12px;color:var(--sub);line-height:1.4;margin-top:8px}
+.tp-copied{font-size:12.5px;color:var(--green);font-weight:700;margin-left:4px;align-self:center}
+</style>
+</head>
+<body>
+
+<div class="demobar"><b>DEMO</b> fictieve data · conceptontwerp afstudeeronderzoek</div>
+
+<div class="stage">
+  <div class="side">
+    <div class="head">Conceptontwerp – zo werkt de nieuwe Reddende Engel-app</div>
+    <p>Vind, beoordeel en neem een dienst aan. Helemaal zelf, zonder eerst een planner te bellen.</p>
+    <p class="small">Klik door de app zoals je dat op je telefoon zou doen. Alle zaken, diensten en bedragen zijn verzonnen.</p>
+  </div>
+
+  <div id="app">
+    <!-- Scherm 0: melding -->
+    <section class="screen active" id="scr-lock">
+      <div class="lock-status"><span>Reddende Engel</span><span>●●●● 4G ▮</span></div>
+      <div class="lock-time">14:32</div>
+      <div class="lock-date">Donderdag 29 oktober</div>
+      <button class="notif" id="notif">
+        <div class="notif-top"><span class="appicon" data-logo></span><span data-logo>REDDENDE ENGEL</span><span class="now">nu</span></div>
+        <div class="notif-title">Nieuwe dienst die bij je past</div>
+        <div class="notif-body">Bediening · za 31 okt · 17:00–23:30 · verdien ~€136 · 6 km</div>
+      </button>
+      <div class="lock-hint">Tik op de melding om hem te openen</div>
+      <div class="lock-bottom">
+        <button class="lock-skip" id="skip">Sla over en open de app</button>
+        <div class="homebar"></div>
+      </div>
+    </section>
+
+    <!-- Scherm 1: Ontdek -->
+    <section class="screen tabbed" id="scr-discover">
+      <div class="scroll" id="discScroll">
+        <header class="hdr">
+          <div class="hdr-top">
+            <div class="logo" data-logo id="logoMain"></div>
+            <div class="hdr-icons">
+              <button class="iconbtn" data-toast="Meldingen zijn niet onderdeel van deze demo" aria-label="Meldingen"><svg class="ico" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></button>
+              <button class="iconbtn" data-toast="Zoeken is niet onderdeel van deze demo" aria-label="Zoeken"><svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+            </div>
+          </div>
+          <h1>Vind jouw dienst</h1>
+          <p>10 diensten in ’t Gooi de komende 2 weken</p>
+        </header>
+        <div class="chips">
+          <button class="chip" data-toast="Filters werken niet in deze demo">Dienstsoort <svg class="ico" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+          <button class="chip" data-toast="Filters werken niet in deze demo">Afstand <svg class="ico" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+          <button class="chip" data-toast="Filters werken niet in deze demo">Tarief <svg class="ico" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+        </div>
+        <div class="sticky">
+          <div class="daystrip" id="daystrip"></div>
+          <div class="tl-head">
+            <span class="t" id="tlLabel"></span>
+            <div class="seg">
+              <button id="vList" class="on"><svg class="ico" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Lijst</button>
+              <button id="vMap"><svg class="ico" viewBox="0 0 24 24"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg>Kaart</button>
+            </div>
+          </div>
+        </div>
+        <div id="discBody"></div>
+      </div>
+    </section>
+
+    <!-- Scherm 2: detail -->
+    <section class="screen" id="scr-detail">
+      <div class="scroll" id="detScroll"></div>
+      <div class="dbar" id="dbar"></div>
+    </section>
+
+    <!-- Scherm 3b: bevestiging -->
+    <section class="screen" id="scr-confirm"></section>
+
+    <!-- Scherm 4: Mijn diensten -->
+    <section class="screen tabbed" id="scr-mine">
+      <header class="subhdr">
+        <div class="subhdr-row">
+          <button class="iconbtn" data-back aria-label="Terug"><svg class="ico" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+          <h1>Mijn diensten</h1>
+        </div>
+        <div class="mtabs" id="mtabs">
+          <button data-mt="aangemeld" class="on">Aangemeld</button>
+          <button data-mt="bevestigd">Bevestigd</button>
+          <button data-mt="afgerond">Afgerond</button>
+        </div>
+      </header>
+      <div class="scroll"><div class="list" id="mineList"></div></div>
+    </section>
+
+    <!-- Placeholders -->
+    <section class="screen tabbed" id="scr-berichten">
+      <header class="subhdr"><div class="subhdr-row"><button class="iconbtn" data-back aria-label="Terug"><svg class="ico" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button><h1>Berichten</h1></div></header>
+      <div class="scroll"><div class="empty"><div class="ei"><svg class="ico" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><b>Niet onderdeel van deze demo</b><p>Deze demo gaat over het vinden, beoordelen en aannemen van een dienst.</p><button class="btn" data-tab="discover">Naar ontdek</button></div></div>
+    </section>
+    <section class="screen tabbed" id="scr-profiel">
+      <header class="subhdr"><div class="subhdr-row"><button class="iconbtn" data-back aria-label="Terug"><svg class="ico" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button><h1>Profiel</h1></div></header>
+      <div class="scroll"><div class="empty"><div class="ei"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div><b>Niet onderdeel van deze demo</b><p>Deze demo gaat over het vinden, beoordelen en aannemen van een dienst.</p><button class="btn" data-tab="discover">Naar ontdek</button></div></div>
+    </section>
+
+    <!-- Tabbalk -->
+    <nav class="tabbar hide" id="tabbar">
+      <button data-tab="discover"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>Ontdek</button>
+      <button data-tab="mine"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/><path d="m9 15 2 2 4-4"/></svg>Mijn diensten<span class="badge" id="mineBadge"></span></button>
+      <button data-tab="berichten"><svg class="ico" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Berichten</button>
+      <button data-tab="profiel"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Profiel</button>
+    </nav>
+
+    <!-- Bottom sheet -->
+    <div class="sheet-bg" id="sheetBg"></div>
+    <div class="sheet" id="sheet"></div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <div class="gearcol">
+    <button class="gear" id="gear" aria-label="Testmodus openen"><svg class="ico" viewBox="0 0 24 24" style="width:24px;height:24px"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span class="dot"></span></button>
+    <div class="gearlabel">Testmodus</div>
+  </div>
+</div>
+
+<!-- Testmodus-paneel -->
+<div class="tp-bg" id="tpBg"></div>
+<aside class="tpanel" id="tpanel" aria-label="Testmodus">
+  <div class="tp-h"><div><h2>Testmodus</h2><small>Alleen in het geheugen van deze pagina · niets wordt opgeslagen</small></div><button class="iconbtn" id="tpClose" aria-label="Sluiten"><svg class="ico" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+  <div class="tp-b" id="tpBody"></div>
+</aside>
+
+<script>
+/* =========================================================
+   Basis
+   ========================================================= */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+
+// Vaste demodatum zodat de fictieve data altijd klopt: donderdag 29 oktober 2026
+const TODAY = new Date(2026, 9, 29);
+const DAY_ABBR = ['ZO', 'MA', 'DI', 'WO', 'DO', 'VR', 'ZA'];
+const DAY_SHORT = ['zo', 'ma', 'di', 'wo', 'do', 'vr', 'za'];
+const DAY_LONG = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'];
+const MONTHS = ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'];
+const MONTHS_SHORT = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
+
+const dateOf = off => { const d = new Date(TODAY); d.setDate(d.getDate() + off); return d; };
+const fmtShort = off => { const d = dateOf(off); return `${DAY_SHORT[d.getDay()]} ${d.getDate()} ${MONTHS_SHORT[d.getMonth()]}`; };
+const fmtLong = off => { const d = dateOf(off); return `${DAY_LONG[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`; };
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const euro = n => '€' + n.toFixed(2).replace('.', ',');
+const num = n => (Math.round(n * 10) / 10).toString().replace('.', ',');
+const mins = t => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
+function paidHours(start, end, pause, pausePaid) {
+  let d = mins(end) - mins(start);
+  if (d <= 0) d += 1440;
+  if (!pausePaid) d -= pause;
+  return d / 60;
+}
+const hoursOf = s => paidHours(s.start, s.end, s.pause, s.pausePaid);
+const earnOf = s => hoursOf(s) * s.rate;
+
+/* =========================================================
+   Iconen
+   ========================================================= */
+const WING = `<svg viewBox="0 0 40 22" aria-hidden="true"><path d="M18.5 19C13 18.4 5.5 15.6 1.5 4.5c3.6 3 7.4 4.4 11 4.6C9.6 7.6 7.6 5.3 6.6 2c3.5 3.4 7.4 5.3 11.9 6z" fill="#A9D6E0"/><path d="M18.5 13.6c-3.2-.4-6.6-1.6-9.4-4.2 2.9.9 6 1.1 9.4.9z" fill="#77B2BF"/><path d="M21.5 19c5.5-.6 13-3.4 17-14.5-3.6 3-7.4 4.4-11 4.6 2.9-1.5 4.9-3.8 5.9-7.1-3.5 3.4-7.4 5.3-11.9 6z" fill="#A9D6E0"/><path d="M21.5 13.6c3.2-.4 6.6-1.6 9.4-4.2-2.9.9-6 1.1-9.4.9z" fill="#77B2BF"/></svg>`;
+
+const TYPE_ICON = {
+  plate: `<circle cx="32" cy="34" r="14"/><circle cx="32" cy="34" r="8.5"/><path d="M8 14v10a4 4 0 0 0 4 4v22M12 14v9M16 14v10a4 4 0 0 1-4 4"/><path d="M54 50V14c-4.5 3-6.5 9-6.5 17H54"/>`,
+  hat: `<path d="M20 44v-9c-5-1.2-8-5.2-8-10a9 9 0 0 1 12.5-8.3 9.5 9.5 0 0 1 15 0A9 9 0 0 1 52 25c0 4.8-3 8.8-8 10v9z"/><path d="M20 50h24"/><path d="M28 44v-7M36 44v-7"/>`,
+  glass: `<path d="M12 16h34L29 36z"/><path d="M29 36v14M20 50h18"/><path d="M40 6l-6 14"/><circle cx="48" cy="17" r="6"/><path d="M45 14l6 6"/>`,
+  dish: `<ellipse cx="28" cy="48" rx="18" ry="5"/><path d="M10 48v-5M46 48v-5"/><ellipse cx="28" cy="42" rx="18" ry="5"/><ellipse cx="28" cy="36" rx="18" ry="5"/><circle cx="46" cy="20" r="5"/><circle cx="54" cy="10" r="3"/><circle cx="36" cy="14" r="3.5"/>`,
+  bell: `<path d="M14 44a18 18 0 0 1 36 0z"/><path d="M8 50h48"/><path d="M32 26v-5M27 21h10"/><path d="M22 38a10 10 0 0 1 6-7"/>`
+};
+const typeSvg = (k, cls = 'bigicon') => `<svg class="${cls}" viewBox="0 0 64 64">${TYPE_ICON[k]}</svg>`;
+
+const I = {
+  pin: `<svg class="ico" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>`,
+  clock: `<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`,
+  heart: `<svg class="ico" viewBox="0 0 24 24"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7z"/></svg>`,
+  back: `<svg class="ico" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>`,
+  share: `<svg class="ico" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>`,
+  chev: `<svg class="ico chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>`,
+  right: `<svg class="ico" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>`,
+  info: `<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>`,
+  car: `<svg class="ico" viewBox="0 0 24 24"><path d="M5 17h14M5 17v2M19 17v2M3 13l2-6h14l2 6v4H3z"/><circle cx="7.5" cy="14" r=".5"/><circle cx="16.5" cy="14" r=".5"/></svg>`,
+  bus: `<svg class="ico" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="15" rx="2"/><path d="M5 11h14M8 18v3M16 18v3"/><circle cx="8.5" cy="14.5" r=".5"/><circle cx="15.5" cy="14.5" r=".5"/></svg>`,
+  bike: `<svg class="ico" viewBox="0 0 24 24"><circle cx="5.5" cy="17" r="3.5"/><circle cx="18.5" cy="17" r="3.5"/><path d="M15 6h2l3 11M5.5 17 9 9h7l-4 8H5.5M9 9 8 6H6"/></svg>`,
+  euro: `<svg class="ico" viewBox="0 0 24 24"><path d="M17 6.5A7 7 0 1 0 17 17.5M4 10h9M4 14h9"/></svg>`,
+  coffee: `<svg class="ico" viewBox="0 0 24 24"><path d="M17 8h1a4 4 0 0 1 0 8h-1M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z"/><path d="M6 2v2M10 2v2M14 2v2"/></svg>`,
+  shirt: `<svg class="ico" viewBox="0 0 24 24"><path d="M20.4 6.6 16 4a4 4 0 0 1-8 0L3.6 6.6l1.6 4.2L7 10v10h10V10l1.8.8z"/></svg>`,
+  user: `<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>`,
+  bolt: `<svg class="ico" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></svg>`,
+  check: `<svg class="ico" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>`,
+  phone: `<svg class="ico" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>`,
+  hand: `<svg class="ico" viewBox="0 0 24 24"><path d="M9 11V5a1.5 1.5 0 0 1 3 0v6M12 10V3.5a1.5 1.5 0 0 1 3 0V10M15 10V5.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-1a7 7 0 0 1-5.6-2.8L2 14.6a1.6 1.6 0 0 1 2.5-2L7 15V8a1.5 1.5 0 0 1 2 0"/></svg>`,
+  cal: `<svg class="ico" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>`,
+  search: `<svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>`
+};
+
+/* =========================================================
+   Fictieve data
+   ========================================================= */
+const TYPES = {
+  bediening: { label: 'Bediening', icon: 'plate', grad: 'linear-gradient(210deg,#77B2BF 0%,#45729D 100%)' },
+  kok:       { label: 'Zelfstandig werkend kok', icon: 'hat', grad: 'linear-gradient(149deg,#032145 0%,#06438D 100%)' },
+  hulpkok:   { label: 'Hulpkok', icon: 'hat', grad: 'linear-gradient(160deg,#45729D 0%,#06438D 100%)' },
+  afwas:     { label: 'Afwas', icon: 'dish', grad: 'linear-gradient(200deg,#93AFBE 0%,#45729D 100%)' },
+  bar:       { label: 'Bartending', icon: 'glass', grad: 'linear-gradient(149deg,#06438D 0%,#77B2BF 100%)' },
+  receptie:  { label: 'Receptie', icon: 'bell', grad: 'linear-gradient(190deg,#5E93AE 0%,#032145 100%)' }
+};
+
+const CONTENT = {
+  bediening: {
+    tasks: ['Gasten ontvangen en naar hun tafel brengen', 'Bestellingen opnemen met de kassa-app', 'Gerechten en drankjes uitserveren', 'Tafels afruimen en weer klaarzetten'],
+    bring: 'Zwarte broek of rok, zwart shirt en dichte zwarte schoenen. Een sloof krijg je van de zaak.'
+  },
+  kok: {
+    tasks: ['Zelfstandig de warme keuken draaien', 'Mise-en-place voor de avond', 'Bestellingen strak en op tijd uitsturen', 'Keuken HACCP-proof afsluiten'],
+    bring: 'Koksbuis, koksbroek, veiligheidsschoenen en je eigen messen.'
+  },
+  hulpkok: {
+    tasks: ['Groenten en garnituren snijden', 'Koude gerechten en desserts opmaken', 'De kok helpen tijdens de service', 'Je werkplek schoon houden'],
+    bring: 'Koksbuis, koksbroek en veiligheidsschoenen. Messen zijn aanwezig.'
+  },
+  afwas: {
+    tasks: ['Vaatwasser vullen en leeghalen', 'Pannen en keukengerei afwassen', 'Borden en glazen terugzetten', 'Afwasruimte schoon achterlaten'],
+    bring: 'Dichte schoenen met antislipzool. Schort en handschoenen krijg je.'
+  },
+  bar: {
+    tasks: ['Bar openen en klaarzetten', 'Bier tappen en cocktails maken', 'Afrekenen met pin en kassa', 'Bar afsluiten en kas tellen'],
+    bring: 'Zwarte kleding en dichte schoenen. Ervaring met tappen is fijn.'
+  },
+  receptie: {
+    tasks: ['Gasten in- en uitchecken', 'Telefoon en mail beantwoorden', 'Tips geven over de omgeving', 'Reserveringen en ontbijtlijsten bijhouden'],
+    bring: 'Nette kleding: donkere broek en een wit overhemd of blouse.'
+  }
+};
+
+const SERVICES = [
+  { id: 'bosrand', type: 'afwas', name: 'Partycentrum Bosrand', initials: 'PB', city: 'Baarn', km: 23, day: 1,
+    start: '16:00', end: '22:00', pause: 0, rate: 17, match: false, last: true, hard: true, spots: 1, applicants: 0,
+    rating: 3.9, reviews: 8, extra: [], street: 'Bosrandweg 4, 3743 Baarn',
+    dress: 'Dresscode: zwart', payout24: false,
+    about: 'Groot bruiloftsfeest met 180 gasten. De keuken draait op volle toeren, dus jij houdt de afwas bij zodat er altijd schone borden klaarstaan.',
+    good: ['Personeelsmaaltijd om 17:30', 'Gratis parkeren op eigen terrein', 'Laatste bus naar Hilversum gaat om 22:41'],
+    bizAbout: 'Partycentrum Bosrand organiseert bruiloften, jubilea en bedrijfsfeesten aan de rand van de Baarnse bossen. Twee zalen, één grote keuken.',
+    stats: { confirm: '9 uur', choose: 55, pay: 28 },
+    why: 'Deze dienst valt eigenlijk buiten je voorkeuren: hij is 23 km verderop en het is afwas. We laten hem zien omdat de zaak morgen dringend iemand zoekt.' },
+
+  { id: 'lindehof', type: 'bediening', name: 'Brasserie De Lindehof', initials: 'BL', city: 'Hilversum', km: 6, day: 2,
+    start: '17:00', end: '23:30', pause: 30, pausePaid: true, rate: 21, match: true, spots: 2, applicants: 3,
+    rating: 4.6, reviews: 23, street: 'Lindehoflaan 12, 1211 Hilversum',
+    extra: [{ day: 3, start: '16:00', end: '22:30' }, { day: 8, start: '17:00', end: '23:30' }],
+    dress: 'Dresscode: zwart', payout24: true, travel: { car: 12, ov: 25, bike: 22 },
+    about: 'Zaterdagavond bij De Lindehof is altijd gezellig druk. Je draait mee in een team van vijf in de bediening, met een vaste gastvrouw die je wegwijs maakt. Ervaring met à-la-carte is handig.',
+    good: ['Personeelsmaaltijd om 16:30 (gratis)', 'Fooi wordt eerlijk verdeeld over het team', 'Gratis parkeren achter de zaak'],
+    bizAbout: 'Brasserie De Lindehof is een levendige brasserie aan de rand van het centrum van Hilversum. Seizoensgerechten, een groot terras en vaste gasten die graag even blijven hangen.',
+    stats: { confirm: '3 uur', choose: 80, pay: 14 },
+    why: 'Je doet bediening, woont binnen 15 km en hebt zaterdag als beschikbaar ingesteld.' },
+
+  { id: 'gooimeer', counter: true, type: 'bar', name: 'Strandpaviljoen Gooimeer', initials: 'SG', city: 'Huizen', km: 14, day: 2,
+    start: '15:00', end: '23:00', pause: 30, rate: 22, match: false, spots: 2, applicants: 1,
+    rating: 4.4, reviews: 17, extra: [], street: 'Strandweg 2, 1271 Huizen',
+    dress: 'Dresscode: zwart', payout24: true,
+    about: 'Herfstfeest op het paviljoen met live dj. Je staat met z’n tweeën achter de bar en zorgt dat niemand lang op een drankje hoeft te wachten.',
+    good: ['Personeelsmaaltijd om 18:00', 'Uitzicht op het Gooimeer (gratis)', 'Fietsenstalling bij de personeelsingang'],
+    bizAbout: 'Strandpaviljoen Gooimeer ligt direct aan het water. In de zomer een strandtent, in de winter een knusse plek voor feesten en borrels.',
+    stats: { confirm: '5 uur', choose: 70, pay: 14 },
+    why: 'Je hebt zaterdag als beschikbaar ingesteld. Bartending staat niet in je profiel, en de afstand ligt net boven je 10 km-voorkeur.' },
+
+  { id: 'vista', type: 'bediening', name: 'Restaurant Vista', initials: 'RV', city: 'Bussum', km: 9, day: 2,
+    start: '11:30', end: '16:30', pause: 0, rate: 19, match: false, spots: 1, applicants: 2,
+    rating: 4.2, reviews: 11, extra: [], street: 'Brinklaan 88, 1404 Bussum',
+    dress: 'Dresscode: wit/zwart', payout24: false,
+    about: 'Lunchdienst met een vol restaurant: een verjaardagslunch van 40 personen en de gewone gasten. Je werkt met twee vaste collega’s.',
+    good: ['Koffie en lunch voor personeel', 'Op 5 minuten lopen van station Bussum-Zuid'],
+    bizAbout: 'Restaurant Vista is een licht restaurant met een open keuken en een vaste lunchkaart. ’s Avonds draait er een eigen team.',
+    stats: { confirm: '6 uur', choose: 75, pay: 21 },
+    why: 'Je doet bediening en bent zaterdag beschikbaar. Maar je hebt aangegeven dat je liever avonddiensten draait.' },
+
+  { id: 'brink', counter: true, type: 'kok', name: 'Eetcafé De Brink', initials: 'EB', city: 'Laren', km: 11, day: 3,
+    start: '14:00', end: '22:00', pause: 30, rate: 24, match: false, spots: 1, applicants: 0,
+    rating: 4.5, reviews: 19, extra: [], street: 'Brink 21, 1251 Laren',
+    dress: 'Dresscode: koksbuis', payout24: true,
+    about: 'De vaste kok is op vakantie. Jij draait zelfstandig de keuken met een kleine kaart van zes gerechten en een stagiair als hulp.',
+    good: ['Je kookt zelf je personeelsmaaltijd', 'Mise-en-place is deels al gedaan'],
+    bizAbout: 'Eetcafé De Brink is het huiskamercafé van Laren. Eerlijk eten, een volle bar en veel vaste gasten.',
+    stats: { confirm: '2 uur', choose: 90, pay: 10 },
+    why: 'Je bent zondag beschikbaar. Zelfstandig koken staat niet in je profiel.' },
+
+  { id: 'spieghel', counter: true, type: 'receptie', name: 'Hotel Het Spieghel', initials: 'HS', city: 'Bussum', km: 8, day: 4,
+    start: '07:00', end: '15:00', pause: 30, rate: 18, match: false, spots: 1, applicants: 1,
+    rating: 4.3, reviews: 9, extra: [{ day: 11, start: '07:00', end: '15:00' }], street: 'Spieghellaan 5, 1405 Bussum',
+    dress: 'Dresscode: netjes', payout24: false,
+    about: 'Ochtenddienst op de receptie van een boetiekhotel met 32 kamers. Rustig tempo, veel internationale gasten.',
+    good: ['Ontbijt voor personeel', 'Engels spreken is een must'],
+    bizAbout: 'Hotel Het Spieghel is een klein boetiekhotel in een oude villa, vlak bij de Spiegelstraat.',
+    stats: { confirm: '4 uur', choose: 65, pay: 14 },
+    why: 'Je bent maandag beschikbaar en de afstand past. Receptie staat niet in je profiel.' },
+
+  { id: 'bastion', type: 'bediening', name: 'Vestingcafé Het Bastion', initials: 'VB', city: 'Naarden', km: 12, day: 6,
+    start: '17:30', end: '22:30', pause: 0, rate: 20, match: true, spots: 2, applicants: 1,
+    rating: 4.7, reviews: 31, extra: [], street: 'Vestingwal 3, 1411 Naarden',
+    dress: 'Dresscode: zwart', payout24: true,
+    about: 'Doordeweekse avond met een groep van 25 voor een diner. Je werkt in een team van drie, met een korte briefing vooraf.',
+    good: ['Personeelsmaaltijd om 17:00', 'Parkeren op het Marktplein (vergoed)'],
+    bizAbout: 'Vestingcafé Het Bastion zit in een oud kruitmagazijn in de vesting van Naarden. Sfeervol, druk en met een trouw team.',
+    stats: { confirm: '3 uur', choose: 85, pay: 14 },
+    why: 'Je doet bediening, het is een avonddienst en je bent woensdag beschikbaar.' },
+
+  { id: 'zuiderhaven', type: 'hulpkok', name: 'Bistro Zuiderhaven', initials: 'BZ', city: 'Huizen', km: 15, day: 8,
+    start: '16:00', end: '22:00', pause: 0, rate: 18, match: false, spots: 1, applicants: 0,
+    rating: 4.1, reviews: 6, extra: [], street: 'Havenkade 17, 1271 Huizen',
+    dress: 'Dresscode: koksbuis', payout24: false,
+    about: 'Je helpt de chef in een kleine open keuken. Visgerechten en veel garnituren, dus snijwerk is je ding.',
+    good: ['Personeelsmaaltijd na de service'],
+    bizAbout: 'Bistro Zuiderhaven is een visbistro aan de haven van Huizen, met een kleine kaart en dagverse vis.',
+    stats: { confirm: '7 uur', choose: 60, pay: 21 },
+    why: 'Je bent vrijdag beschikbaar. Hulpkok staat niet in je profiel.' },
+
+  { id: 'heidebloem', type: 'bar', name: 'Feestzaal De Heidebloem', initials: 'FH', city: 'Hilversum', km: 2, day: 9,
+    start: '20:00', end: '02:00', pause: 30, rate: 23, match: true, spots: 3, applicants: 2,
+    rating: 4.5, reviews: 14, extra: [], street: 'Heideweg 40, 1214 Hilversum',
+    dress: 'Dresscode: zwart', payout24: true,
+    about: 'Jubileumfeest met 250 gasten. Grote bar met drie man, de drank is all-in dus je rekent niet af.',
+    good: ['Taxi naar huis na 01:00 wordt vergoed', 'Broodjes en soep in de pauze'],
+    bizAbout: 'Feestzaal De Heidebloem is dé feestlocatie van Hilversum-Zuid, met plek voor 400 gasten.',
+    stats: { confirm: '2 uur', choose: 85, pay: 14 },
+    why: 'Je staat graag achter de bar, het is dicht bij huis en je bent zaterdagavond beschikbaar.' },
+
+  { id: 'zonnehoek', counter: true, type: 'bediening', name: 'Landgoed Hoeve Zonnehoek', initials: 'HZ', city: 'Laren', km: 10, day: 10,
+    start: '12:00', end: '20:00', pause: 30, rate: 21, match: true, last: true, spots: 4, applicants: 3,
+    rating: 4.8, reviews: 27, extra: [], street: 'Zonnehoekweg 1, 1251 Laren',
+    dress: 'Dresscode: zwart', payout24: true,
+    about: 'Zondagse high tea en diner op het landgoed. Rustig begin, druk vanaf 17:00.',
+    good: ['Personeelsmaaltijd om 16:30', 'Gratis parkeren op het landgoed'],
+    bizAbout: 'Landgoed Hoeve Zonnehoek is een oude boerderij met restaurant, theetuin en een grote feestschuur.',
+    stats: { confirm: '3 uur', choose: 80, pay: 14 },
+    why: 'Je doet bediening, het ligt binnen 15 km en je bent zondag beschikbaar.' }
+];
+const byId = id => SERVICES.find(s => s.id === id);
+SERVICES.forEach(s => {
+  if (!s.travel) s.travel = { car: Math.round(s.km * 1.5 + 3), ov: Math.round(s.km * 2.5 + 10), bike: Math.round(s.km * 3.7) };
+});
+const sortedServices = () => [...SERVICES].sort((a, b) => a.day - b.day || mins(a.start) - mins(b.start));
+
+/* =========================================================
+   App-state (alleen in geheugen)
+   ========================================================= */
+const S = {
+  current: 'lock', stack: [], selDay: 0, view: 'lijst', mapSel: null,
+  favs: new Set(), applied: [], detailId: null, detailTab: 'overzicht', extraSel: new Set(),
+  entry: null, mineTab: 'aangemeld', plannerUsed: false, proposals: {}, proposeRate: 0
+};
+
+/* =========================================================
+   Navigatie
+   ========================================================= */
+const TABBED = ['discover', 'mine', 'berichten', 'profiel'];
+let navTimer = null;
+function cleanupNav() {
+  clearTimeout(navTimer); navTimer = null;
+  $$('.screen').forEach(el => {
+    el.classList.remove('in-fwd', 'out-fwd', 'in-back', 'out-back', 'in-fade', 'out-fade');
+    if (el.id !== 'scr-' + S.current) el.classList.remove('active');
+  });
+}
+function go(id, dir = 'fwd', push = true) {
+  if (id === S.current) return;
+  cleanupNav();
+  const from = $('#scr-' + S.current), to = $('#scr-' + id);
+  if (push && dir === 'fwd') S.stack.push(S.current);
+  const [cin, cout] = { fwd: ['in-fwd', 'out-fwd'], back: ['in-back', 'out-back'], fade: ['in-fade', 'out-fade'] }[dir];
+  to.classList.add('active', cin);
+  from.classList.add(cout);
+  S.current = id;
+  updateTabbar();
+  navTimer = setTimeout(cleanupNav, 340);
+}
+function back() {
+  let prev = S.stack.pop();
+  while (prev === 'confirm' || prev === S.current) prev = S.stack.pop();
+  go(prev || 'discover', 'back', false);
+}
+function goTab(tab) {
+  S.stack = [];
+  if (tab === 'discover') renderDiscover();
+  if (tab === 'mine') renderMine();
+  if (S.current === tab) return;
+  go(tab, 'fade', false);
+  if (TABBED.includes(tab)) S.stack = [];
+}
+function updateTabbar() {
+  const tb = $('#tabbar');
+  tb.classList.toggle('hide', !TABBED.includes(S.current));
+  $$('button', tb).forEach(b => b.classList.toggle('on', b.dataset.tab === S.current));
+  const badge = $('#mineBadge');
+  badge.textContent = S.applied.length;
+  badge.classList.toggle('show', S.applied.length > 0);
+}
+
+/* =========================================================
+   Toast
+   ========================================================= */
+let toastTimer;
+function toast(msg) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.style.bottom = TABBED.includes(S.current) ? '84px' : (S.current === 'detail' ? '140px' : '40px');
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* =========================================================
+   Tegel
+   ========================================================= */
+function decoCircles() {
+  return `<span class="deco" style="width:180px;height:180px;left:-50px;top:-70px"></span><span class="deco" style="width:120px;height:120px;right:-30px;bottom:-50px"></span>`;
+}
+function tileHTML(s, opts = {}) {
+  const t = TYPES[s.type];
+  const labels = [];
+  if (s.match) labels.push('<span class="label y">Past bij jou</span>');
+  if (s.extra.length) labels.push(`<span class="label g">+${s.extra.length} ${s.extra.length === 1 ? 'dag' : 'dagen'}</span>`);
+  if (s.counter) labels.push('<span class="label g">Tegenbod mogelijk</span>');
+  if (s.last) labels.push('<span class="label r">Nog 1 plek</span>');
+  return `<article class="tile" data-open="${s.id}">
+    <div class="tile-img" style="background:${t.grad}">${decoCircles()}${typeSvg(t.icon)}
+      <div class="bizlogo">${s.initials}</div>
+      ${opts.status ? `<div class="status-badge"><i></i>${opts.status}</div>` : ''}
+    </div>
+    <div class="tile-body">
+      <button class="heart ${S.favs.has(s.id) ? 'on' : ''}" data-fav="${s.id}" aria-label="Favoriet">${I.heart}</button>
+      <div class="type">${t.label}</div>
+      <div class="name">${s.name}</div>
+      <div class="meta">${I.pin}${s.city} · ${s.km} km</div>
+      <div class="meta">${I.clock}${opts.showDate ? cap(fmtShort(s.day)) + ' · ' : ''}${s.start} – ${s.end}</div>
+      <div class="tile-foot">
+        <div class="labels">${labels.join('')}</div>
+        <div class="price"><span class="rate">${euro(s.rate)}/u</span><small>Verdien ~ ${euro(earnOf(s))}</small></div>
+      </div>
+    </div>
+  </article>`;
+}
+
+/* =========================================================
+   Scherm 1 – Ontdek
+   ========================================================= */
+function renderDayStrip() {
+  const daysWith = new Set(SERVICES.map(s => s.day));
+  let h = '';
+  for (let i = 0; i < 14; i++) {
+    const d = dateOf(i);
+    h += `<button class="day ${i === S.selDay ? 'sel' : ''}" data-day="${i}" aria-label="${fmtLong(i)}">
+      <span class="dn">${DAY_ABBR[d.getDay()]}</span><span class="dd">${d.getDate()}</span>${daysWith.has(i) ? '<span class="dot"></span>' : ''}</button>`;
+  }
+  $('#daystrip').innerHTML = h;
+}
+function renderDiscover() {
+  renderDayStrip();
+  $('#vList').classList.toggle('on', S.view === 'lijst');
+  $('#vMap').classList.toggle('on', S.view === 'kaart');
+  $('#tlLabel').textContent = S.selDay === 0 ? 'Vanaf vandaag' : 'Vanaf ' + fmtShort(S.selDay);
+  const list = sortedServices().filter(s => s.day >= S.selDay);
+  if (S.view === 'kaart') return renderMap(list);
+  if (!list.length) {
+    $('#discBody').innerHTML = `<div class="empty"><b>Geen diensten meer</b><p>Na deze dag staan er nog geen diensten. Kies een eerdere dag.</p></div>`;
+    return;
+  }
+  let h = '<div class="list">', lastDay = null;
+  list.forEach(s => {
+    if (s.day !== lastDay) {
+      lastDay = s.day;
+      const rel = s.day === 0 ? 'Vandaag' : s.day === 1 ? 'Morgen' : '';
+      const n = list.filter(x => x.day === s.day).length;
+      h += `<div class="dayhead">${rel ? rel + ' · ' + fmtLong(s.day) : cap(fmtLong(s.day))}<small>${n} ${n === 1 ? 'dienst' : 'diensten'}</small></div>`;
+    }
+    h += tileHTML(s);
+  });
+  $('#discBody').innerHTML = h + '</div>';
+}
+
+const TOWNS = {
+  Naarden: [118, 108], Huizen: [262, 78], Bussum: [112, 180], Laren: [232, 196], Baarn: [348, 300], Hilversum: [160, 322]
+};
+function mapSVG() {
+  return `<svg viewBox="0 0 400 440" preserveAspectRatio="none" aria-label="Kaart van 't Gooi">
+    <rect width="400" height="440" fill="#EEF3EC"/>
+    <path d="M0 0h400v120c-20 6-34 2-46-12-14-16-30-24-60-18-30 6-44-12-70-20-28-8-50 10-80 4C110 68 90 58 64 66 36 74 18 64 0 56z" fill="#BCDCE6"/>
+    <path d="M330 0h70v220c-14-12-22-34-24-60-2-30-18-52-36-74-12-16-14-46-10-86z" fill="#BCDCE6"/>
+    <text x="150" y="30" font-family="Archivo" font-size="12" font-weight="700" fill="#5C8DA6" letter-spacing="2">GOOIMEER</text>
+    <text x="350" y="120" font-family="Archivo" font-size="10" font-weight="700" fill="#5C8DA6" transform="rotate(80 350 120)" letter-spacing="2">EEMMEER</text>
+    <path d="M40 250c30-20 70-10 80 20s-20 60-60 50-40-50-20-70z" fill="#D9E8D4"/>
+    <path d="M260 250c40-10 70 10 60 40s-60 40-80 20-10-50 20-60z" fill="#D9E8D4"/>
+    <path d="M190 400c40-20 90-10 110 10s-10 30-60 30-70-20-50-40z" fill="#D9E8D4"/>
+    <path d="M60 130c20-10 40 0 36 16s-30 20-44 10-6-20 8-26z" fill="#D9E8D4"/>
+    <g fill="none" stroke="#fff" stroke-linecap="round">
+      <path d="M0 150C80 140 160 140 230 150s110 10 170 0" stroke-width="9"/>
+      <path d="M150 440C155 380 150 320 160 260s50-100 80-160 20-80 30-100" stroke-width="7"/>
+      <path d="M160 322C220 310 290 300 400 290" stroke-width="6"/>
+      <path d="M112 180C150 190 200 196 232 196s60 30 116 104" stroke-width="5"/>
+      <path d="M118 108C116 140 112 160 112 180s20 90 48 142" stroke-width="5"/>
+    </g>
+    <g fill="none" stroke="#F4D06F" stroke-linecap="round">
+      <path d="M0 150C80 140 160 140 230 150s110 10 170 0" stroke-width="3"/>
+    </g>
+    <text x="8" y="140" font-family="Archivo" font-size="10" font-weight="700" fill="#B08A1E">A1</text>
+    ${Object.entries(TOWNS).map(([n, [x, y]]) => `<circle cx="${x}" cy="${y}" r="26" fill="#E3E7EB" opacity=".7"/><text x="${x}" y="${y + 40}" text-anchor="middle" font-family="Archivo" font-size="12.5" font-weight="700" fill="#45729D">${n}</text>`).join('')}
+  </svg>`;
+}
+const PIN_OFF = [[-20, 0], [20, 0], [0, -28], [0, 28]];
+function renderMap(list) {
+  const perTown = {};
+  let pins = '';
+  list.forEach(s => {
+    const k = perTown[s.city] = (perTown[s.city] || 0) + 1;
+    const [x, y] = TOWNS[s.city]; const [dx, dy] = PIN_OFF[(k - 1) % 4];
+    pins += `<button class="pin ${s.match ? 'match' : ''} ${S.mapSel === s.id ? 'on' : ''}" data-pin="${s.id}" style="left:${(x + dx) / 4}%;top:${(y + dy - 4) / 4.4}%">€${s.rate}</button>`;
+  });
+  const [mx, my] = [TOWNS.Hilversum[0] - 46, TOWNS.Hilversum[1] + 26];
+  let mini = '';
+  const sel = S.mapSel && list.find(s => s.id === S.mapSel);
+  if (sel) {
+    const t = TYPES[sel.type];
+    mini = `<div class="minitile" data-open="${sel.id}">
+      <div class="mi" style="background:${t.grad}">${typeSvg(t.icon, '')}</div>
+      <div class="tx"><span style="color:var(--primary);font-weight:700">${t.label} · ${fmtShort(sel.day)}</span><b>${sel.name}</b><span>${sel.start} – ${sel.end} · ${euro(sel.rate)}/u · ~ ${euro(earnOf(sel))}</span></div>
+      <span class="go">${I.right}</span></div>`;
+  }
+  $('#discBody').innerHTML = `<div class="mapwrap">${mapSVG()}
+    ${sel ? '' : `<div class="maphint">${list.length} diensten vanaf ${S.selDay === 0 ? 'vandaag' : fmtShort(S.selDay)} · tik op een prijs</div>`}
+    <span class="me" style="left:${mx / 4}%;top:${my / 4.4}%"></span><span class="me-label" style="left:${mx / 4}%;top:${my / 4.4}%">jij</span>
+    ${pins}${mini}</div>`;
+}
+
+/* =========================================================
+   Scherm 2 – Dienstdetail
+   ========================================================= */
+function openDetail(id, via) {
+  const s = byId(id);
+  S.detailId = id; S.detailTab = 'overzicht'; S.extraSel = new Set();
+  if (via) S.entry = via;
+  renderDetail();
+  $('#detScroll').scrollTop = 0;
+  go('detail', S.current === 'lock' ? 'fade' : 'fwd');
+  Test.event('detail', s);
+}
+function starStr(r) { const f = Math.round(r); return '★'.repeat(f) + '☆'.repeat(5 - f); }
+function renderDetail() {
+  const s = byId(S.detailId), t = TYPES[s.type];
+  const applied = S.applied.includes(s.id);
+  $('#detScroll').innerHTML = `
+    <div class="hero" style="background:${t.grad}">${decoCircles()}
+      <div class="hero-btns">
+        <button class="roundbtn" data-back aria-label="Terug">${I.back}</button>
+        <div class="r">
+          <button class="roundbtn" data-toast="Delen werkt niet in deze demo" aria-label="Delen">${I.share}</button>
+          <button class="roundbtn heart ${S.favs.has(s.id) ? 'on' : ''}" data-fav="${s.id}" aria-label="Favoriet">${I.heart}</button>
+        </div>
+      </div>
+      ${typeSvg(t.icon)}
+      <div class="bizlogo">${s.initials}</div>
+    </div>
+    <div class="d-head">
+      <div class="type">${t.label} · ${s.km} km</div>
+      <h2>${s.name}</h2>
+      <div class="stars"><span class="st">${starStr(s.rating)}</span><b>${num(s.rating)} ★</b>· ${s.reviews} beoordelingen van freelancers</div>
+    </div>
+    <div class="dtabs" id="dtabs">
+      ${['overzicht', 'beschrijving', 'opdrachtgever'].map(k => `<button data-dtab="${k}" class="${S.detailTab === k ? 'on' : ''}">${k.toUpperCase()}</button>`).join('')}
+    </div>
+    <div class="dpane ${s.counter ? 'has-counter' : ''}" id="dpane">${detailPane(s)}</div>`;
+  const sub = s.applicants === 0 ? `Nog niemand aangemeld · ${s.spots} ${s.spots === 1 ? 'plek' : 'plekken'}` : `${s.applicants} ${s.applicants === 1 ? 'aanmelding' : 'aanmeldingen'} voor ${s.spots} ${s.spots === 1 ? 'plek' : 'plekken'}`;
+  $('#dbar').innerHTML = `
+    <div class="dbar-row">
+      <div class="p"><b>${euro(s.rate)}/u</b><span>Verdien ~ ${euro(earnOf(s))}</span></div>
+      ${(() => {
+        const btn = applied ? `<button class="btn" disabled>${I.check} Aangemeld</button>` : `<button class="btn yellow" id="applyBtn">Aanmelden</button>`;
+        if (!s.counter) return btn;
+        const extra = S.proposals[s.id] ? `<span class="counter-sent">Voorstel verstuurd · ${euro(S.proposals[s.id])}/u</span>` : `<button class="counter-link" id="counterLink">Ander tarief voorstellen</button>`;
+        return `<div class="dbar-act">${btn}${extra}</div>`;
+      })()}
+    </div>
+    <div class="dbar-sub"><span>${applied ? 'Wacht op bevestiging van de zaak' : sub}</span><button class="link" data-toast="Berichten zijn niet onderdeel van deze demo">Vraag? Stuur de planner een bericht</button></div>`;
+}
+function detailPane(s) {
+  const t = TYPES[s.type], c = CONTENT[s.type];
+  if (S.detailTab === 'beschrijving') {
+    return `<div class="sect prose"><h3>Over deze dienst</h3><p>${s.about}</p></div>
+      <div class="sect prose"><h3>Wat ga je doen?</h3><ul>${c.tasks.map(x => `<li>${x}</li>`).join('')}</ul></div>
+      <div class="sect prose"><h3>Wat neem je mee?</h3><p>${c.bring}</p></div>
+      <div class="sect prose"><h3>Goed om te weten</h3><ul>${s.good.map(x => `<li>${x}</li>`).join('')}</ul></div>`;
+  }
+  if (S.detailTab === 'opdrachtgever') {
+    return `<div class="sect prose"><h3>${s.name}</h3><p>${s.bizAbout}</p>
+        <div class="stars" style="margin-top:10px"><span class="st">${starStr(s.rating)}</span><b>${num(s.rating)}</b>· ${s.reviews} beoordelingen van freelancers</div></div>
+      <div class="card facts">
+        <div class="fact"><span class="fi">${I.bolt}</span><div>Bevestigt aanmeldingen gemiddeld <b>binnen ${s.stats.confirm}</b></div></div>
+        <div class="fact"><span class="fi">${I.user}</span><div>Kiest in <b>${s.stats.choose}%</b> van de diensten een freelancer</div></div>
+        <div class="fact"><span class="fi">${I.euro}</span><div>Betaalt gemiddeld <b>binnen ${s.stats.pay} dagen</b></div></div>
+      </div>`;
+  }
+  const h = hoursOf(s);
+  const extraHTML = s.extra.length ? `<div class="extra"><p>Deze dienst is ook op deze dagen beschikbaar</p>
+      ${s.extra.map((e, i) => `<label class="chk"><input type="checkbox" data-extra="${i}" ${S.extraSel.has(i) ? 'checked' : ''}>${cap(fmtShort(e.day))}<span>${e.start} – ${e.end}</span></label>`).join('')}</div>` : '';
+  const pauseChip = s.pause ? `${s.pause} min pauze${s.pausePaid ? ' (betaald)' : ''}` : 'Geen pauze';
+  return `
+    <div class="sect">
+      <div class="when"><div class="cal"><small>${DAY_SHORT[dateOf(s.day).getDay()]}</small><b>${dateOf(s.day).getDate()}</b><small>${MONTHS_SHORT[dateOf(s.day).getMonth()]}</small></div>
+        <div class="wt"><b>${cap(fmtLong(s.day))}</b><span>${s.start} – ${s.end} · ${num(h)} uur betaald</span></div></div>
+      ${extraHTML}
+    </div>
+    <div class="dchips" style="margin-bottom:12px">
+      <span class="dchip">${I.user}ZZP bij de opdrachtgever</span>
+      ${s.payout24 ? `<span class="dchip">${I.bolt}Uitbetaling binnen 24 uur mogelijk</span>` : ''}
+      <span class="dchip">${I.coffee}${pauseChip}</span>
+      <span class="dchip">${I.shirt}${s.dress}</span>
+    </div>
+    <div class="earn">
+      ${s.match ? '<span class="label y tag">Past bij jou</span>' : ''}
+      <h3>Wat verdien je</h3>
+      <div class="big">~ ${euro(earnOf(s))}</div>
+      <p>${num(h)} uur × ${euro(s.rate)}${s.pause && !s.pausePaid ? ` · ${s.pause} min pauze niet betaald` : ''}</p>
+    </div>
+    ${s.hard ? `<div class="planner"><b>Liever eerst even overleggen?</b><p>Twijfel je over de reistijd of het werk? Bel de planner, die denkt met je mee.</p><button class="btn block" id="callPlanner">${I.phone} Bel de planner</button></div>` : ''}
+    <div class="sect">
+      <h3>Waar</h3>
+      <div class="dmap">${detailMapSVG(s)}</div>
+      <div class="addr">${I.pin}<div><b>${s.name}</b><br><span style="color:var(--sub)">${s.street}</span></div></div>
+      <div class="travel">
+        <div>${I.car}<b>${s.travel.car} min</b>auto</div>
+        <div>${I.bus}<b>${s.travel.ov} min</b>OV</div>
+        <div>${I.bike}<b>${s.travel.bike} min</b>fiets</div>
+      </div>
+    </div>
+    <details class="why"><summary>${I.info}Waarom zie ik deze dienst?${I.chev}</summary><p>${s.why}</p></details>`;
+}
+function detailMapSVG(s) {
+  return `<svg viewBox="0 0 360 130" preserveAspectRatio="xMidYMid slice">
+    <rect width="360" height="130" fill="#EEF3EC"/>
+    <path d="M250 0h110v130H290c-20-30-40-80-40-130z" fill="#D9E8D4"/>
+    <g stroke="#fff" fill="none" stroke-linecap="round">
+      <path d="M0 70h360" stroke-width="10"/><path d="M120 0v130" stroke-width="8"/><path d="M0 20c80 10 160 20 250 0" stroke-width="5"/>
+      <path d="M210 0c-10 50 0 90 20 130" stroke-width="5"/><path d="M40 130c10-30 30-50 80-60" stroke-width="4"/>
+    </g>
+    <path d="M0 70h360" stroke="#F4D06F" stroke-width="3"/>
+    <g transform="translate(176 62)"><path d="M0 0c0-10-8-12-8-20a8 8 0 0 1 16 0c0 8-8 10-8 20z" fill="#06438D" transform="translate(0 0) scale(1.6) translate(0 -2)"/><circle cx="0" cy="-36" r="4.5" fill="#fff"/></g>
+    <text x="196" y="40" font-family="Archivo" font-size="12" font-weight="700" fill="#06438D">${s.initials}</text>
+    <text x="10" y="120" font-family="Archivo" font-size="11" font-weight="700" fill="#45729D">${s.city}</text>
+  </svg>`;
+}
+
+/* =========================================================
+   Scherm 3 – Aanmelden
+   ========================================================= */
+function openSheet() {
+  const s = byId(S.detailId), t = TYPES[s.type];
+  const days = [{ day: s.day, start: s.start, end: s.end }, ...[...S.extraSel].sort().map(i => s.extra[i])];
+  const total = days.reduce((a, d) => a + paidHours(d.start, d.end, s.pause, s.pausePaid) * s.rate, 0);
+  $('#sheet').innerHTML = `<div class="grab"></div>
+    <h2>Check je aanmelding</h2>
+    <p class="sub">Klopt alles? Dan meld je je met één tik aan.</p>
+    <div class="sumrow"><span>Zaak</span><b>${s.name}</b></div>
+    <div class="sumrow"><span>Functie</span><b>${t.label}</b></div>
+    ${days.map((d, i) => `<div class="sumrow"><span>${i === 0 ? (days.length > 1 ? 'Datums' : 'Datum') : ''}</span><b>${cap(fmtShort(d.day))} · ${d.start} – ${d.end}</b></div>`).join('')}
+    <div class="sumrow"><span>Tarief</span><b>${euro(s.rate)}/u</b></div>
+    <div class="sumtotal"><span>Verdien ~${days.length > 1 ? ` (${days.length} diensten)` : ''}</span><b>${euro(total)}</b></div>
+    <button class="btn yellow block" id="confirmBtn">Bevestig aanmelding</button>
+    <button class="cancel" id="cancelSheet">Annuleren</button>`;
+  $('#sheetBg').classList.add('open');
+  $('#sheet').classList.add('open');
+}
+function closeSheet() {
+  $('#sheetBg').classList.remove('open');
+  const sh = $('#sheet');
+  sh.classList.remove('open', 'dragging');
+  sh.style.transform = '';
+  delete sh.dataset.kind;
+}
+
+/* Tegenbod: tarief voorstellen */
+const COUNTER_STEP = 0.5, COUNTER_MAX = 8;
+function openCounterSheet() {
+  const s = byId(S.detailId);
+  S.proposeRate = s.rate;
+  const sh = $('#sheet');
+  sh.dataset.kind = 'counter';
+  sh.innerHTML = `<div class="grab"></div>
+    <button class="sheet-x" id="sheetX" aria-label="Sluiten"><svg class="ico" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    <h2>Stel je tarief voor</h2>
+    <p class="sub">Huidig tarief: ${euro(s.rate)}/u</p>
+    <div class="stepper">
+      <button class="step" data-step="-1" aria-label="Lager">−</button>
+      <div class="step-val"><b id="propRate"></b><small>per uur</small></div>
+      <button class="step" data-step="1" aria-label="Hoger">+</button>
+    </div>
+    <div class="sumtotal"><span>Verdien ~</span><b id="propEarn"></b></div>
+    <p class="sheet-note">Heel normaal om te doen. De zaak ziet je voorstel en kan het accepteren of afwijzen. Je aanmelding blijft gewoon staan.</p>
+    <button class="btn block" id="sendProposal">Voorstel versturen</button>`;
+  updateCounterSheet();
+  $('#sheetBg').classList.add('open');
+  sh.classList.add('open');
+  Test.event('counterOpen', s);
+}
+function updateCounterSheet() {
+  const s = byId(S.detailId), r = S.proposeRate;
+  $('#propRate').textContent = euro(r);
+  $('#propEarn').textContent = euro(hoursOf(s) * r);
+  $('[data-step="-1"]').disabled = r <= s.rate;
+  $('[data-step="1"]').disabled = r >= s.rate + COUNTER_MAX;
+  $('#sendProposal').disabled = r <= s.rate;
+}
+function sendProposal() {
+  const s = byId(S.detailId), t = TYPES[s.type], r = S.proposeRate;
+  if (r <= s.rate) return;
+  S.proposals[s.id] = r;
+  if (!S.applied.includes(s.id)) S.applied.unshift(s.id);
+  closeSheet();
+  $('#scr-confirm').innerHTML = `
+    <div class="cf-top"><button class="roundbtn" data-back aria-label="Terug">${I.back}</button></div>
+    <div class="cf-check"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <h2 class="long">Je voorstel van <span style="text-transform:none">${euro(r)}/u</span> is verstuurd</h2>
+    <p class="lead">Je hoort het zodra de zaak heeft gereageerd.</p>
+    <div class="card cf-card"><div class="mi" style="background:${t.grad}">${typeSvg(t.icon, '')}</div>
+      <div><b>${s.name}</b><span>${t.label} · ${cap(fmtShort(s.day))} · ${s.start} – ${s.end}</span></div></div>
+    <button class="btn block" data-tab="mine">Naar mijn diensten</button>
+    <div class="demoinfo">Demo-info · Geregistreerd: tariefvoorstel via app (zonder planner)</div>`;
+  go('confirm', 'fade');
+  Test.event('proposal', s, r);
+}
+// Tegenbod-sheet sluiten door naar beneden te vegen
+let sheetDrag = null;
+$('#sheet').addEventListener('pointerdown', e => {
+  const sh = $('#sheet');
+  if (sh.dataset.kind !== 'counter' || e.target.closest('button')) return;
+  sheetDrag = { y: e.clientY, dy: 0 };
+  sh.classList.add('dragging');
+});
+document.addEventListener('pointermove', e => {
+  if (!sheetDrag) return;
+  sheetDrag.dy = Math.max(0, e.clientY - sheetDrag.y);
+  $('#sheet').style.transform = `translateY(${sheetDrag.dy}px)`;
+});
+['pointerup', 'pointercancel'].forEach(ev => document.addEventListener(ev, () => {
+  if (!sheetDrag) return;
+  const sh = $('#sheet'), far = sheetDrag.dy > 90;
+  sheetDrag = null;
+  sh.classList.remove('dragging');
+  sh.style.transform = '';
+  if (far) closeSheet();
+}));
+function confirmApply() {
+  const s = byId(S.detailId), t = TYPES[s.type];
+  const nDays = 1 + S.extraSel.size;
+  if (!S.applied.includes(s.id)) S.applied.unshift(s.id);
+  closeSheet();
+  const via = S.entry === 'melding' ? 'melding → app' : 'Ontdek → app';
+  $('#scr-confirm').innerHTML = `
+    <div class="cf-top"><button class="roundbtn" data-back aria-label="Terug">${I.back}</button></div>
+    <div class="cf-check"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <h2>Je bent aangemeld!</h2>
+    <p class="lead">De zaak bevestigt meestal binnen een paar uur. Je krijgt een melding.</p>
+    <div class="card cf-card"><div class="mi" style="background:${t.grad}">${typeSvg(t.icon, '')}</div>
+      <div><b>${s.name}</b><span>${t.label} · ${cap(fmtShort(s.day))} · ${s.start} – ${s.end}${nDays > 1 ? ` · +${nDays - 1} ${nDays === 2 ? 'dag' : 'dagen'}` : ''}</span></div></div>
+    <button class="btn block" data-tab="mine">Naar mijn diensten</button>
+    <div class="demoinfo">Demo-info · Geregistreerd: ingevuld via ${via} (zelfstandig, zonder planner)${S.plannerUsed ? ' · let op: planner-knop is gebruikt' : ''}</div>`;
+  go('confirm', 'fade');
+  Test.event('confirmed', s);
+}
+
+/* =========================================================
+   Scherm 4 – Mijn diensten
+   ========================================================= */
+function renderMine() {
+  $$('#mtabs button').forEach(b => b.classList.toggle('on', b.dataset.mt === S.mineTab));
+  const el = $('#mineList');
+  if (S.mineTab === 'aangemeld') {
+    el.innerHTML = S.applied.length
+      ? S.applied.map(id => tileHTML(byId(id), { status: S.proposals[id] ? `Voorstel verstuurd · ${euro(S.proposals[id])}/u` : 'Wacht op bevestiging', showDate: true })).join('')
+      : `<div class="empty"><div class="ei">${I.cal}</div><b>Nog geen aanmeldingen</b><p>Vind een dienst die bij je past en meld je aan.</p><button class="btn" data-tab="discover">Ontdek diensten</button></div>`;
+  } else if (S.mineTab === 'bevestigd') {
+    el.innerHTML = `<div class="empty"><div class="ei">${I.check}</div><b>Nog niks bevestigd</b><p>Zodra een zaak je kiest, zie je de dienst hier. Je krijgt dan ook een melding.</p></div>`;
+  } else {
+    const done = [
+      { type: 'bediening', name: 'Eetcafé De Brink', d: 'za 17 okt · 17:00 – 23:00', amt: 115.5 },
+      { type: 'bar', name: 'Strandpaviljoen Gooimeer', d: 'za 10 okt · 16:00 – 22:00', amt: 126 }
+    ];
+    el.innerHTML = done.map(x => `<div class="card done-card"><div class="mi" style="background:${TYPES[x.type].grad}">${typeSvg(TYPES[x.type].icon, '')}</div>
+      <div class="tx"><b>${x.name}</b><span>${TYPES[x.type].label} · ${x.d}</span><div class="paid">${I.check} Uitbetaald ${euro(x.amt)}</div></div></div>`).join('');
+  }
+}
+
+/* =========================================================
+   Events in de app
+   ========================================================= */
+$('#logoMain').innerHTML = WING + '<span>REDDENDE ENGEL</span>';
+$('.notif-top .appicon').innerHTML = WING;
+
+$('#app').addEventListener('click', e => {
+  const el = e.target;
+  const fav = el.closest('[data-fav]');
+  if (fav) {
+    e.stopPropagation();
+    const id = fav.dataset.fav;
+    S.favs.has(id) ? S.favs.delete(id) : S.favs.add(id);
+    $$(`[data-fav="${id}"]`).forEach(b => b.classList.toggle('on', S.favs.has(id)));
+    toast(S.favs.has(id) ? 'Bewaard in je favorieten' : 'Uit je favorieten gehaald');
+    return;
+  }
+  const tst = el.closest('[data-toast]');
+  if (tst) return toast(tst.dataset.toast);
+  if (el.closest('[data-back]')) return back();
+  const tab = el.closest('[data-tab]');
+  if (tab) { closeSheet(); return goTab(tab.dataset.tab); }
+  const open = el.closest('[data-open]');
+  if (open) return openDetail(open.dataset.open, S.current === 'mine' ? null : 'ontdek');
+  const day = el.closest('[data-day]');
+  if (day) {
+    S.selDay = +day.dataset.day; S.mapSel = null;
+    renderDiscover();
+    const strip = $('#daystrip'), btn = $(`[data-day="${S.selDay}"]`, strip);
+    strip.scrollTo({ left: btn.offsetLeft - 16 - 54, behavior: 'smooth' });
+    const sticky = $('.sticky'), sc = $('#discScroll');
+    if (sc.scrollTop > sticky.offsetTop) sc.scrollTop = sticky.offsetTop;
+    return;
+  }
+  const pin = el.closest('[data-pin]');
+  if (pin) { S.mapSel = S.mapSel === pin.dataset.pin ? null : pin.dataset.pin; return renderDiscover(); }
+  const dt = el.closest('[data-dtab]');
+  if (dt) {
+    S.detailTab = dt.dataset.dtab;
+    $$('#dtabs button').forEach(b => b.classList.toggle('on', b === dt));
+    $('#dpane').innerHTML = detailPane(byId(S.detailId));
+    const tabs = $('#dtabs'), sc = $('#detScroll');
+    if (sc.scrollTop > tabs.offsetTop) sc.scrollTop = tabs.offsetTop;
+    return;
+  }
+  const mt = el.closest('[data-mt]');
+  if (mt) { S.mineTab = mt.dataset.mt; return renderMine(); }
+  if (el.closest('#applyBtn')) { Test.event('apply'); return openSheet(); }
+  if (el.closest('#confirmBtn')) return confirmApply();
+  if (el.closest('#counterLink')) return openCounterSheet();
+  const step = el.closest('[data-step]');
+  if (step) {
+    const s = byId(S.detailId);
+    S.proposeRate = Math.min(s.rate + COUNTER_MAX, Math.max(s.rate, S.proposeRate + COUNTER_STEP * +step.dataset.step));
+    return updateCounterSheet();
+  }
+  if (el.closest('#sendProposal')) return sendProposal();
+  if (el.closest('#sheetX')) return closeSheet();
+  if (el.closest('#cancelSheet') || el.closest('#sheetBg')) return closeSheet();
+  if (el.closest('#callPlanner')) { S.plannerUsed = true; Test.event('planner'); return toast('Demo: hier bel je de planner'); }
+  if (el.closest('#notif')) return openDetail('lindehof', 'melding');
+  if (el.closest('#skip')) { S.entry = 'ontdek'; return goTab('discover'); }
+  if (el.closest('#vList')) { S.view = 'lijst'; return renderDiscover(); }
+  if (el.closest('#vMap')) { S.view = 'kaart'; S.mapSel = null; return renderDiscover(); }
+});
+// De app-container zelf mag nooit scrollen (focus kan dat anders veroorzaken)
+$('#app').addEventListener('scroll', e => { if (e.target.id === 'app') e.target.scrollTop = 0; });
+$('#app').addEventListener('change', e => {
+  const x = e.target.closest('[data-extra]');
+  if (x) { const i = +x.dataset.extra; x.checked ? S.extraSel.add(i) : S.extraSel.delete(i); }
+});
+
+/* =========================================================
+   Testmodus
+   ========================================================= */
+const TASKS = [
+  { q: 'Vind een dienst voor zaterdag die bij je past.', end: 'start → detail geopend' },
+  { q: 'Bekijk de dienst en vertel hardop of je hem zou doen.', end: 'start → AANMELDEN getikt' },
+  { q: 'Meld je aan voor de dienst.', end: 'start → bevestigd' }
+];
+const Test = {
+  code: 'P1', view: 'lijst', startScreen: 'melding',
+  running: null, t0: 0, taps: 0, res: [null, null, null],
+  answer: '', why: '', planner: 0, archive: [], showResults: false, tick: null,
+  t2Start: null, counter: null, proposal: null, lowAns: '', lowWhy: '',
+
+  event(type, s, rate) {
+    if (type === 'planner') this.planner++;
+    if (type === 'counterOpen' && !this.counter) this.counter = { secs: this.t2Start ? (performance.now() - this.t2Start) / 1000 : null };
+    if (type === 'proposal') this.proposal = rate;
+    if (type === 'detail' && this.running === 0) this.finish(0, s.name + (s.match ? '' : ' (past niet)'));
+    if (type === 'apply' && this.running === 1) this.finish(1);
+    if (type === 'confirmed' && this.running === 2) this.finish(2);
+  },
+  start(i) {
+    if (i === 0) {
+      resetApp(true);
+      if (this.startScreen === 'ontdek') { S.entry = 'ontdek'; goTab('discover'); }
+    }
+    this.running = i; this.t0 = performance.now(); this.taps = 0; this.res[i] = null;
+    if (i === 1) this.t2Start = this.t0;
+    closePanel();
+    clearInterval(this.tick);
+    this.tick = setInterval(() => this.updateLive(), 200);
+    renderPanel();
+  },
+  finish(i, found) {
+    const secs = (performance.now() - this.t0) / 1000;
+    this.res[i] = { secs, taps: this.taps, found };
+    this.running = null;
+    clearInterval(this.tick);
+    if (i === 2) $('#gear').classList.add('attn');
+    renderPanel();
+  },
+  stop() { this.running = null; clearInterval(this.tick); renderPanel(); },
+  updateLive() {
+    const el = $('#live');
+    if (el && this.running !== null) el.textContent = `loopt… ${num((performance.now() - this.t0) / 1000)} s · ${this.taps} tikken`;
+  },
+  record() {
+    return { code: this.code || '–', view: this.view, start: this.startScreen, res: this.res.slice(), answer: this.answer, why: this.why, planner: this.planner,
+      counter: this.counter, proposal: this.proposal, lowAns: this.lowAns, lowWhy: this.lowWhy };
+  },
+  hasData() { return this.res.some(Boolean) || this.answer || this.why || this.counter || this.lowAns || this.lowWhy; }
+};
+// Tikken tellen: alleen tikken binnen de app, alleen tijdens een lopende taak
+$('#app').addEventListener('pointerdown', () => { if (Test.running !== null) Test.taps++; }, true);
+
+const fmtRes = r => r ? `${num(r.secs)} s / ${r.taps} t` : '–';
+const fmtCounter = c => !c ? 'Nee' : c.secs === null ? 'Ja (taak 2 niet gestart)' : `Ja, na ${num(c.secs)} s`;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+function renderPanel() {
+  const T = Test;
+  const rows = [...T.archive.map(r => ({ r, cur: false })), { r: T.record(), cur: true }];
+  $('#tpBody').innerHTML = `
+    <div class="tp-sec tp-row">
+      <div><label class="tp-lbl" for="tpCode">Deelnemercode</label><input class="tp-in" id="tpCode" value="${esc(T.code)}" placeholder="bijv. P1" autocomplete="off"></div>
+      <div><span class="tp-lbl">Startweergave</span><div class="tp-seg"><button data-tpview="lijst" class="${T.view === 'lijst' ? 'on' : ''}">Lijst</button><button data-tpview="kaart" class="${T.view === 'kaart' ? 'on' : ''}">Kaart</button></div></div>
+    </div>
+    <div class="tp-sec">
+      <span class="tp-lbl">Startscherm bij taak 1</span>
+      <div class="tp-seg"><button data-tpstart="melding" class="${T.startScreen === 'melding' ? 'on' : ''}">Pushmelding</button><button data-tpstart="ontdek" class="${T.startScreen === 'ontdek' ? 'on' : ''}">Ontdek (tijdlijn)</button></div>
+    </div>
+    <div class="tp-sec">
+      <span class="tp-lbl">Taken</span>
+      ${TASKS.map((t, i) => {
+        const run = T.running === i, r = T.res[i];
+        return `<div class="task ${run ? 'run' : r ? 'done' : ''}">
+          <div class="task-top"><span class="task-n">${i + 1}</span><div class="task-q">“${t.q}”<small>Meet: ${t.end}${i === 0 ? ' · zet de app bij start terug op het gekozen startscherm' : ''}</small></div></div>
+          <div class="task-act">
+            <span class="task-res" ${run ? 'id="live"' : ''}>${run ? 'loopt…' : r ? `✓ ${num(r.secs)} s · ${r.taps} tikken${r.found ? ' · ' + esc(r.found) : ''}` : 'Nog niet gestart'}</span>
+            ${run ? `<button class="sbtn red" data-tpstop>Stop</button>` : `<button class="sbtn ${r ? 'gh' : 'y'}" data-tptask="${i}" ${T.running !== null ? 'disabled style="opacity:.4"' : ''}>${r ? 'Opnieuw' : 'Start'}</button>`}
+          </div></div>`;
+      }).join('')}
+      <p class="tp-note">Het paneel sluit bij start. Tijd en tikken stoppen vanzelf. Tikken tellen alleen binnen de app.${T.planner ? ` Planner-knop ${T.planner}× gebruikt.` : ''}</p>
+      <p class="tp-note"><b>Tegenbod:</b> link “Ander tarief voorstellen” geopend: ${fmtCounter(T.counter)}${T.counter && T.counter.secs !== null ? ' (vanaf start taak 2)' : ''} · voorstel verstuurd: ${T.proposal ? euro(T.proposal) + '/u' : 'nee'}</p>
+    </div>
+    <div class="tp-sec">
+      <div class="q ${T.res[1] ? 'on' : ''}">
+        <p>“Stel dat je dit tarief te laag vindt. Wat doe je dan?”</p>
+        <div class="tp-seg">${['App', 'Bellen', 'WhatsApp', 'Niets'].map(a => `<button data-tplow="${a}" class="${T.lowAns === a ? 'on' : ''}">${a}</button>`).join('')}</div>
+        <textarea class="tp-ta" id="tpLowWhy" placeholder="Waarom?">${esc(T.lowWhy)}</textarea>
+      </div>
+      ${T.res[1] ? '' : '<p class="tp-note">Verschijnt na taak 2.</p>'}
+    </div>
+    <div class="tp-sec">
+      <div class="q ${T.res[2] ? 'on' : ''}">
+        <p>“Zou je deze dienst nu aannemen zonder een planner te bellen?”</p>
+        <div class="tp-seg">${['Ja', 'Nee', 'Twijfel'].map(a => `<button data-tpans="${a}" class="${T.answer === a ? 'on' : ''}">${a}</button>`).join('')}</div>
+        <textarea class="tp-ta" id="tpWhy" placeholder="Waarom? (opmerking)">${esc(T.why)}</textarea>
+      </div>
+      ${T.res[2] ? '' : '<p class="tp-note">Verschijnt na taak 3.</p>'}
+    </div>
+    <div class="tp-sec">
+      <div class="tp-actions">
+        <button class="sbtn gh" data-tpshow>${T.showResults ? 'Resultaten verbergen' : 'Resultaten tonen'}</button>
+        <button class="sbtn gh" data-tpcopy>Kopieer als tekst</button><span class="tp-copied" id="tpCopied"></span>
+      </div>
+      ${T.showResults ? `<div class="restbl"><table>
+        <thead><tr><th>Code</th><th>Weergave</th><th>Start</th><th>Taak 1</th><th>Taak 2</th><th>Tegenbod-link</th><th>Voorstel</th><th>Te laag: actie</th><th>Te laag: waarom</th><th>Taak 3</th><th>Antwoord</th><th>Opmerking</th></tr></thead>
+        <tbody>${rows.map(({ r, cur }) => `<tr class="${cur ? 'cur' : ''}"><td><b>${esc(r.code)}</b>${cur ? ' (nu)' : ''}</td><td>${r.view}</td><td>${r.start}</td>
+          <td>${fmtRes(r.res[0])}${r.res[0] && r.res[0].found ? '<br><small>' + esc(r.res[0].found) + '</small>' : ''}</td><td>${fmtRes(r.res[1])}</td><td>${fmtCounter(r.counter)}</td><td>${r.proposal ? euro(r.proposal) + '/u' : '–'}</td><td>${esc(r.lowAns || '–')}</td><td>${esc(r.lowWhy || '–')}</td><td>${fmtRes(r.res[2])}</td>
+          <td>${esc(r.answer || '–')}</td><td>${esc(r.why || '–')}${r.planner ? ` <small>(planner-knop ${r.planner}×)</small>` : ''}</td></tr>`).join('')}</tbody></table></div>` : ''}
+    </div>
+    <div class="tp-sec">
+      <button class="btn block" data-tpreset>Reset voor volgende deelnemer</button>
+      <p class="tp-note">Bewaart deze deelnemer in de tabel (alleen in het geheugen), zet de app terug op de pushmelding en zet de code klaar voor de volgende. Ververs je de pagina, dan is alles weg.</p>
+    </div>`;
+}
+function resultsText() {
+  const rows = [...Test.archive, Test.record()];
+  const head = ['Code', 'Weergave', 'Startscherm', 'T1 tijd (s)', 'T1 tikken', 'T1 gevonden', 'T2 tijd (s)', 'T2 tikken', 'T3 tijd (s)', 'T3 tikken', 'Antwoord', 'Opmerking', 'Planner-knop',
+    'Tegenbod-link geopend', 'Tegenbod-link na (s, vanaf start T2)', 'Voorstel verstuurd (€/u)', 'Te laag: actie', 'Te laag: waarom'];
+  const lines = rows.map(r => [r.code, r.view, r.start,
+    ...[0, 1, 2].flatMap(i => {
+      const x = r.res[i];
+      const base = [x ? num(x.secs) : '', x ? x.taps : ''];
+      return i === 0 ? [...base, x && x.found ? x.found : ''] : base;
+    }),
+    r.answer, (r.why || '').replace(/\s+/g, ' '), r.planner,
+    r.counter ? 'Ja' : 'Nee', r.counter && r.counter.secs !== null ? num(r.counter.secs) : '',
+    r.proposal ? num(r.proposal) : '', r.lowAns || '', (r.lowWhy || '').replace(/\s+/g, ' ')].join('\t'));
+  return [head.join('\t'), ...lines].join('\n');
+}
+function copyText(txt) {
+  const done = () => { const el = $('#tpCopied'); if (el) { el.textContent = 'Gekopieerd ✓'; setTimeout(() => el.textContent = '', 2000); } };
+  const fallback = () => {
+    const ta = document.createElement('textarea');
+    ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); } catch (e) { alert(txt); }
+    ta.remove();
+  };
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(txt).then(done, fallback);
+  else fallback();
+}
+function resetApp(full) {
+  closeSheet();
+  Object.assign(S, { stack: [], selDay: 0, view: Test.view, mapSel: null, favs: new Set(), applied: [], detailId: null,
+    detailTab: 'overzicht', extraSel: new Set(), entry: null, mineTab: 'aangemeld', plannerUsed: false, proposals: {}, proposeRate: 0 });
+  if (full) Object.assign(Test, { planner: 0, t2Start: null, counter: null, proposal: null });
+  renderDiscover(); renderMine();
+  $('#discScroll').scrollTop = 0;
+  if (S.current !== 'lock') go('lock', 'fade', false);
+  S.stack = [];
+  updateTabbar();
+}
+function nextCode(c) { const m = /^(.*?)(\d+)$/.exec(c || ''); return m ? m[1] + (+m[2] + 1) : c; }
+
+$('#tpBody').addEventListener('click', e => {
+  const el = e.target, T = Test;
+  const v = el.closest('[data-tpview]');
+  if (v) { T.view = v.dataset.tpview; S.view = T.view; S.mapSel = null; renderDiscover(); return renderPanel(); }
+  const st = el.closest('[data-tpstart]');
+  if (st) { T.startScreen = st.dataset.tpstart; return renderPanel(); }
+  const tk = el.closest('[data-tptask]');
+  if (tk && T.running === null) return T.start(+tk.dataset.tptask);
+  if (el.closest('[data-tpstop]')) return T.stop();
+  const an = el.closest('[data-tpans]');
+  if (an) { T.answer = T.answer === an.dataset.tpans ? '' : an.dataset.tpans; return renderPanel(); }
+  const lo = el.closest('[data-tplow]');
+  if (lo) { T.lowAns = T.lowAns === lo.dataset.tplow ? '' : lo.dataset.tplow; return renderPanel(); }
+  if (el.closest('[data-tpshow]')) { T.showResults = !T.showResults; return renderPanel(); }
+  if (el.closest('[data-tpcopy]')) return copyText(resultsText());
+  if (el.closest('[data-tpreset]')) {
+    if (T.hasData()) T.archive.push(T.record());
+    T.code = nextCode(T.code);
+    Object.assign(T, { running: null, res: [null, null, null], answer: '', why: '', planner: 0, lowAns: '', lowWhy: '' });
+    clearInterval(T.tick);
+    $('#gear').classList.remove('attn');
+    resetApp(true);
+    return renderPanel();
+  }
+});
+$('#tpBody').addEventListener('input', e => {
+  if (e.target.id === 'tpCode') Test.code = e.target.value.trim();
+  if (e.target.id === 'tpWhy') Test.why = e.target.value;
+  if (e.target.id === 'tpLowWhy') Test.lowWhy = e.target.value;
+});
+function openPanel() {
+  renderPanel();
+  $('#tpanel').classList.add('open'); $('#tpBg').classList.add('open');
+  $('#gear').classList.remove('attn');
+}
+function closePanel() { $('#tpanel').classList.remove('open'); $('#tpBg').classList.remove('open'); }
+$('#gear').addEventListener('click', () => $('#tpanel').classList.contains('open') ? closePanel() : openPanel());
+$('#tpClose').addEventListener('click', closePanel);
+$('#tpBg').addEventListener('click', closePanel);
+
+// Op mobiel: lang drukken op het logo opent de testmodus
+let lpTimer = null, lpFired = false;
+document.addEventListener('pointerdown', e => {
+  if (!e.target.closest('[data-logo]')) return;
+  lpFired = false;
+  lpTimer = setTimeout(() => {
+    lpFired = true;
+    if (Test.running !== null) Test.taps = Math.max(0, Test.taps - 1);
+    openPanel();
+  }, 700);
+});
+['pointerup', 'pointercancel', 'pointerleave', 'pointermove'].forEach(ev => document.addEventListener(ev, e => {
+  if (ev === 'pointermove' && Math.abs(e.movementX) + Math.abs(e.movementY) < 6) return;
+  clearTimeout(lpTimer);
+}));
+// Voorkom dat een lange druk op de melding ook de dienst opent
+document.addEventListener('click', e => { if (lpFired) { lpFired = false; e.stopPropagation(); e.preventDefault(); } }, true);
+document.addEventListener('contextmenu', e => { if (e.target.closest('[data-logo]')) e.preventDefault(); });
+
+/* =========================================================
+   Start
+   ========================================================= */
+renderDiscover();
+renderMine();
+updateTabbar();
+</script>
+</body>
+</html>
