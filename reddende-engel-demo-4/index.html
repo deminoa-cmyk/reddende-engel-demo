@@ -551,6 +551,10 @@ body{-webkit-font-smoothing:antialiased}
 .tile-img.photo::after,.hero.photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,33,69,.28) 0%,rgba(3,33,69,0) 38%,rgba(3,33,69,0) 70%,rgba(3,33,69,.22) 100%)}
 .hero-btns{z-index:3}
 .tile-ov{justify-content:flex-end;gap:8px}
+.chat-quick{padding:0 12px;background:rgba(255,255,255,.96)}
+.chat-quick:empty{display:none}
+.quick-msg{display:flex;gap:8px;align-items:flex-start;width:100%;text-align:left;margin-top:8px;padding:10px 12px;border-radius:14px;border:1.5px solid #77B2BF;background:#F2F8FA;color:var(--secondary);font-size:13.5px;font-weight:600;line-height:1.35}
+.quick-msg .ico{width:18px;height:18px;flex:none;margin-top:1px}
 .photo.ph1.pos-low{background-position:center 88%}
 .saved-empty{font-size:13.5px;color:var(--sub);margin:0 0 8px;line-height:1.45}
 #mineList .dayhead .ico{width:17px;height:17px;color:var(--secondary)}
@@ -680,6 +684,7 @@ body{-webkit-font-smoothing:antialiased}
         <div class="chat-who"><b>Stijn</b><span><i></i>Planner · Reddende Engel</span></div>
       </header>
       <div class="scroll chat-body" id="chatBody"></div>
+      <div class="chat-quick" id="chatQuick"></div>
       <form class="chat-input" id="chatForm" autocomplete="off">
         <input id="chatText" placeholder="Bericht aan Stijn" aria-label="Bericht aan Stijn">
         <button type="submit" class="chat-send" aria-label="Verstuur"><svg class="ico" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
@@ -1044,8 +1049,12 @@ function renderChat() {
     ${S.chat.map(m => m.typing
       ? `<div class="bubble b-them typing"><i></i><i></i><i></i></div>`
       : `<div class="bubble ${m.from === 'me' ? 'b-me' : 'b-them'}">${m.text}<small>${m.time}</small></div>`).join('')}`;
+  // Standaardbericht om met één tik tariefadvies te vragen (alleen bij een dienst, en zolang je het nog niet vroeg)
+  $('#chatQuick').innerHTML = about && !S.adviceAsked[about.id]
+    ? `<button class="quick-msg" data-quick="advice">${I.chat}${QUICK_ADVICE}</button>` : '';
   const b = $('#chatBody'); b.scrollTop = b.scrollHeight;
 }
+const QUICK_ADVICE = 'Wat voor tariefadvies geef je mij bij deze dienst? Gebaseerd op mijn ervaring en jouw kennis over deze klus.';
 function openChat(aboutId) {
   S.chatAbout = aboutId || null;
   renderChat();
@@ -1058,7 +1067,10 @@ function sendChat(text) {
   S.chat.push(typing);
   renderChat();
   const about = S.chatAbout && byId(S.chatAbout);
-  const reply = /tarief|uur|€|euro|geld|betaal/i.test(text)
+  if (about && text === QUICK_ADVICE) S.adviceAsked[about.id] = true;
+  const reply = about && text === QUICK_ADVICE
+    ? `Goede vraag! Op basis van jouw ervaring en wat ik weet van ${about.name}, zou ik ${euro(about.rate + 1)} tot ${euro(about.rate + 2.5)} per uur voorstellen. Dat ligt net boven hun gemiddelde van ${euro(about.rate)}, en past bij wat jij meebrengt. Succes! 🙂`
+    : /tarief|uur|€|euro|geld|betaal/i.test(text)
     ? `Goede vraag! ${about ? `Bij ${about.name} ` : 'Bij de meeste zaken '}zou ik iets rond het gemiddelde voorstellen, of iets erboven als je veel ervaring hebt. Ik kijk het even voor je na.`
     : `Dank je! ${about ? `Ik kijk even naar de dienst bij ${about.name} en ` : 'Ik kijk er even naar en '}laat het je zo weten. 👍`;
   setTimeout(() => {
@@ -1596,6 +1608,7 @@ $('#app').addEventListener('click', e => {
   if (el.closest('#sendBid')) return sendBid();
   if (el.closest('#sheetX')) return closeSheet();
   if (el.closest('#cancelSheet') || el.closest('#sheetBg')) return closeSheet();
+  if (el.closest('[data-quick="advice"]')) return sendChat(QUICK_ADVICE);
   if (el.closest('#askPlanner')) { closeSheet(); setTimeout(() => openChat(S.detailId), 250); return; }
   if (el.closest('#notif')) {
     // Vanuit de melding kom je op de tijdlijn, bij de dag van de dienst; de dienst licht even op
