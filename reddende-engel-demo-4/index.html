@@ -874,7 +874,7 @@ const SERVICES = [
     stats: { confirm: '5 uur', choose: 70, pay: 14 },
     why: 'Je hebt zaterdag als beschikbaar ingesteld. Bartending staat niet in je profiel, en de afstand ligt net boven je 10 km-voorkeur.' },
 
-  { id: 'vista', type: 'barista', name: 'Coworking Space Westerdok', initials: 'CW', city: 'Amsterdam', km: 31, day: 2,
+  { id: 'vista', type: 'barista', name: 'Coworking Space Westerdok', initials: 'CW', city: 'Amsterdam', km: 31, day: 1,
     start: '11:30', end: '16:30', pause: 0, rate: 19, match: false, spots: 1, applicants: 2,
     rating: 4.2, reviews: 11, extra: [], street: 'Westerdoksplein 8, 1013 Amsterdam',
     dress: 'Dresscode: wit/zwart', payout24: false,
@@ -954,11 +954,11 @@ const SERVICES = [
     stats: { confirm: '2 uur', choose: 85, pay: 14 },
     why: '' },
 
-  { id: 'spaarne', type: 'bediening', name: 'Bistro Spaarneterras', initials: 'BS', city: 'Haarlem', km: 38, day: 3,
+  { id: 'spaarne', type: 'bediening', name: 'Bistro Spaarneterras', initials: 'BS', city: 'Haarlem', km: 38, day: 1,
     start: '12:00', end: '20:00', pause: 30, rate: 26, match: true, spots: 2, applicants: 1,
     rating: 4.7, reviews: 21, extra: [], street: 'Spaarnekade 14, 2011 Haarlem',
     dress: 'Dresscode: zwart', payout24: true,
-    about: 'Zondag op het terras aan het Spaarne. Bistrokaart met lunch, borrel en diner; je loopt buiten met een collega, binnen staat een vaste barista.',
+    about: 'Vrijdag op het terras aan het Spaarne. Bistrokaart met lunch, borrel en diner; je loopt buiten met een collega, binnen staat een vaste barista.',
     good: ['Personeelsmaaltijd om 15:30', 'Fooi wordt eerlijk verdeeld', 'Gratis parkeren in de garage om de hoek'],
     bizAbout: 'Bistro Spaarneterras is een Franse terrasbistro aan het water in hartje Haarlem. Rieten stoelen, wafels met kip, verse friet en een goed glas wijn bij zonsondergang.',
     stats: { confirm: '2 uur', choose: 85, pay: 14 },
@@ -976,7 +976,10 @@ SERVICES.forEach(s => {
   if (!s.travel) s.travel = { car: Math.round(s.km * 1.5 + 3), ov: Math.round(s.km * 2.5 + 10), bike: Math.round(s.km * 3.7) };
 });
 const SHORT_ROLE = { bediening: 'Bediening', kok: 'Kok', hulpkok: 'Hulpkok', afwas: 'Afwas', bar: 'Bardienst', receptie: 'Host', barista: 'Barista' };
-const sortedServices = () => [...SERVICES].sort((a, b) => a.day - b.day || mins(a.start) - mins(b.start));
+// De zaken met foto's staan bovenaan, in een vaste volgorde; daarna per dag op starttijd
+const FEATURED = ['bosrand', 'vista', 'spaarne', 'gooier'];
+const featRank = s => FEATURED.includes(s.id) ? FEATURED.indexOf(s.id) : 99;
+const sortedServices = () => [...SERVICES].sort((a, b) => a.day - b.day || featRank(a) - featRank(b) || mins(a.start) - mins(b.start));
 
 /* =========================================================
    App-state (alleen in geheugen)
