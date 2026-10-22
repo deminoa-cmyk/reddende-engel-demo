@@ -543,6 +543,10 @@ body{-webkit-font-smoothing:antialiased}
 .tile-img.photo::after,.hero.photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,33,69,.28) 0%,rgba(3,33,69,0) 38%,rgba(3,33,69,0) 70%,rgba(3,33,69,.22) 100%)}
 .hero-btns{z-index:3}
 .tile-ov{justify-content:flex-end;gap:8px}
+.saved-empty{font-size:13.5px;color:var(--sub);margin:0 0 8px;line-height:1.45}
+#mineList .dayhead .ico{width:17px;height:17px;color:var(--secondary)}
+#mineList .dayhead{align-items:center}
+.mtabs button{font-size:13px}
 .role-pill{font-size:14px;font-weight:700;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.92);color:var(--secondary);box-shadow:0 4px 14px rgba(0,0,0,.25)}
 .tile-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.85);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:var(--secondary);display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.2)}
 .tile-arrow .ico{width:18px;height:18px}
@@ -653,6 +657,7 @@ body{-webkit-font-smoothing:antialiased}
           <button data-mt="aangemeld" class="on">Aangemeld</button>
           <button data-mt="bevestigd">Bevestigd</button>
           <button data-mt="afgerond">Afgerond</button>
+          <button data-mt="bewaard">Bewaard</button>
         </div>
       </header>
       <div class="scroll"><div class="list" id="mineList"></div></div>
@@ -933,7 +938,7 @@ const sortedServices = () => [...SERVICES].sort((a, b) => a.day - b.day || mins(
 const S = {
   current: 'lock', stack: [], selDay: 0, view: 'lijst', mapSel: null,
   favs: new Set(), applied: [], detailId: null, detailTab: 'overzicht', extraSel: new Set(),
-  entry: null, mineTab: 'aangemeld', adviceAsked: {}, chat: [], chatAbout: null, bids: {}, bidRate: 0, pendingBid: null
+  entry: null, mineTab: 'aangemeld', adviceAsked: {}, chat: [], chatAbout: null, chatted: [], bids: {}, bidRate: 0, pendingBid: null
 };
 
 /* =========================================================
@@ -1021,6 +1026,7 @@ function openChat(aboutId) {
   go('berichten', 'fwd');
 }
 function sendChat(text) {
+  if (S.chatAbout && !S.chatted.includes(S.chatAbout)) S.chatted.push(S.chatAbout);
   S.chat.push({ from: 'me', text: text.replace(/[<>&]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c])), time: nowTime() });
   const typing = { typing: true };
   S.chat.push(typing);
@@ -1470,6 +1476,14 @@ function renderMine() {
       : `<div class="empty"><div class="ei">${I.cal}</div><b>Nog geen aanmeldingen</b><p>Vind een dienst die bij je past en meld je aan.</p><button class="btn" data-tab="discover">Ontdek diensten</button></div>`;
   } else if (S.mineTab === 'bevestigd') {
     el.innerHTML = `<div class="empty"><div class="ei">${I.check}</div><b>Nog niks bevestigd</b><p>Zodra een zaak je kiest, zie je de dienst hier. Je krijgt dan ook een melding.</p></div>`;
+  } else if (S.mineTab === 'bewaard') {
+    // Bewaard: diensten met een hartje en diensten waarover je met de planner hebt gechat
+    const favs = sortedServices().filter(s => S.favs.has(s.id));
+    const chatted = sortedServices().filter(s => S.chatted.includes(s.id));
+    el.innerHTML = `<div class="dayhead">${I.heart} Met een hartje<small>${favs.length}</small></div>
+      ${favs.length ? favs.map(s => tileHTML(s, { showDate: true })).join('') : `<p class="saved-empty">Tik op het hartje bij een dienst om hem hier te bewaren.</p>`}
+      <div class="dayhead">${I.chat} Besproken met de planner<small>${chatted.length}</small></div>
+      ${chatted.length ? chatted.map(s => tileHTML(s, { showDate: true, status: 'Besproken met Stijn' })).join('') : `<p class="saved-empty">Diensten waarover je Stijn een bericht stuurt, zie je hier terug.</p>`}`;
   } else {
     const done = [
       { id: 'brink', type: 'bediening', name: 'Eetcafé De Brink', d: 'za 17 okt · 17:00 – 23:00', amt: 115.5 },
@@ -1504,6 +1518,7 @@ $('#app').addEventListener('click', e => {
     S.favs.has(id) ? S.favs.delete(id) : S.favs.add(id);
     $$(`[data-fav="${id}"]`).forEach(b => b.classList.toggle('on', S.favs.has(id)));
     toast(S.favs.has(id) ? 'Bewaard in je favorieten' : 'Uit je favorieten gehaald');
+    if (S.current === 'mine' && S.mineTab === 'bewaard') renderMine();
     return;
   }
   const tst = el.closest('[data-toast]');
