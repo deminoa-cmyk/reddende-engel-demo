@@ -543,6 +543,7 @@ body{-webkit-font-smoothing:antialiased}
 .tile-img.photo::after,.hero.photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,33,69,.28) 0%,rgba(3,33,69,0) 38%,rgba(3,33,69,0) 70%,rgba(3,33,69,.22) 100%)}
 .hero-btns{z-index:3}
 .tile-ov{justify-content:flex-end;gap:8px}
+.photo.ph1.pos-low{background-position:center 88%}
 .saved-empty{font-size:13.5px;color:var(--sub);margin:0 0 8px;line-height:1.45}
 #mineList .dayhead .ico{width:17px;height:17px;color:var(--secondary)}
 #mineList .dayhead{align-items:center}
@@ -778,7 +779,8 @@ const TYPES = {
   hulpkok:   { label: 'Hulpkok', icon: 'hat', grad: 'linear-gradient(160deg,#45729D 0%,#06438D 100%)' },
   afwas:     { label: 'Afwas', icon: 'dish', grad: 'linear-gradient(200deg,#93AFBE 0%,#45729D 100%)' },
   bar:       { label: 'Bartending', icon: 'glass', grad: 'linear-gradient(149deg,#06438D 0%,#77B2BF 100%)' },
-  receptie:  { label: 'Receptie', icon: 'bell', grad: 'linear-gradient(190deg,#5E93AE 0%,#032145 100%)' }
+  receptie:  { label: 'Receptie', icon: 'bell', grad: 'linear-gradient(190deg,#5E93AE 0%,#032145 100%)' },
+  barista:   { label: 'Barista', icon: 'glass', grad: 'linear-gradient(200deg,#93AFBE 0%,#45729D 100%)' }
 };
 
 const CONTENT = {
@@ -801,6 +803,10 @@ const CONTENT = {
   bar: {
     tasks: ['Bar openen en klaarzetten', 'Bier tappen en cocktails maken', 'Afrekenen met pin en kassa', 'Bar afsluiten en kas tellen'],
     bring: 'Zwarte kleding en dichte schoenen. Ervaring met tappen is fijn.'
+  },
+  barista: {
+    tasks: ['Koffie, thee en smoothies maken', 'Broodjes en lunch uitgeven', 'Afrekenen aan de bar', 'Bar en koffiemachine schoon houden'],
+    bring: 'Zwarte kleding en dichte schoenen. Ervaring met een espressomachine is fijn.'
   },
   receptie: {
     tasks: ['Gasten in- en uitchecken', 'Telefoon en mail beantwoorden', 'Tips geven over de omgeving', 'Reserveringen en ontbijtlijsten bijhouden'],
@@ -840,13 +846,13 @@ const SERVICES = [
     stats: { confirm: '5 uur', choose: 70, pay: 14 },
     why: 'Je hebt zaterdag als beschikbaar ingesteld. Bartending staat niet in je profiel, en de afstand ligt net boven je 10 km-voorkeur.' },
 
-  { id: 'vista', type: 'bediening', name: 'Restaurant Vista', initials: 'RV', city: 'Bussum', km: 9, day: 2,
+  { id: 'vista', type: 'barista', name: 'Coworking Space Westerdok', initials: 'CW', city: 'Amsterdam', km: 31, day: 2,
     start: '11:30', end: '16:30', pause: 0, rate: 19, match: false, spots: 1, applicants: 2,
-    rating: 4.2, reviews: 11, extra: [], street: 'Brinklaan 88, 1404 Bussum',
+    rating: 4.2, reviews: 11, extra: [], street: 'Westerdoksplein 8, 1013 Amsterdam',
     dress: 'Dresscode: wit/zwart', payout24: false,
-    about: 'Lunchdienst met een vol restaurant: een verjaardagslunch van 40 personen en de gewone gasten. Je werkt met twee vaste collega’s.',
-    good: ['Koffie en lunch voor personeel', 'Op 5 minuten lopen van station Bussum-Zuid'],
-    bizAbout: 'Restaurant Vista is een licht restaurant met een open keuken en een vaste lunchkaart. ’s Avonds draait er een eigen team.',
+    about: 'Lunchdienst in de koffiebar van een drukke coworking space: koffie, broodjes en lunch voor zo’n 150 mensen die hier werken. Je staat met twee vaste collega’s achter de bar en in de zaal.',
+    good: ['Koffie en lunch voor personeel', 'Op 10 minuten lopen van Amsterdam Centraal'],
+    bizAbout: 'Coworking Space Westerdok is een werkplek voor zzp’ers en kleine bedrijven aan het water in Amsterdam, met een eigen koffiebar en lunchroom.',
     stats: { confirm: '6 uur', choose: 75, pay: 21 },
     why: 'Je doet bediening en bent zaterdag beschikbaar. Maar je hebt aangegeven dat je liever avonddiensten draait.' },
 
@@ -925,11 +931,13 @@ const byId = id => SERVICES.find(s => s.id === id);
 const PHOTO = { lindehof: 2, zonnehoek: 2, spieghel: 2, vista: 1, bastion: 1, brink: 1, zuiderhaven: 1, gooimeer: 3, heidebloem: 3, bosrand: 3 };
 // Zaken met meerdere foto's: in het dienstdetail blader je er met pijltjes doorheen
 const PHOTOS = { spaarne: ['hp1', 'hp2', 'hp3', 'hp4'] };
-const photoOf = id => 'photo ' + (PHOTOS[id] ? PHOTOS[id][0] : 'ph' + PHOTO[id]);
+// Per zaak een eigen uitsnede van de foto (de coworking space toont de koffiebar onderin de foto)
+const PHOTO_POS = { vista: 'pos-low' };
+const photoOf = id => 'photo ' + (PHOTOS[id] ? PHOTOS[id][0] : 'ph' + PHOTO[id]) + (PHOTO_POS[id] ? ' ' + PHOTO_POS[id] : '');
 SERVICES.forEach(s => {
   if (!s.travel) s.travel = { car: Math.round(s.km * 1.5 + 3), ov: Math.round(s.km * 2.5 + 10), bike: Math.round(s.km * 3.7) };
 });
-const SHORT_ROLE = { bediening: 'Bediening', kok: 'Kok', hulpkok: 'Hulpkok', afwas: 'Afwas', bar: 'Bar', receptie: 'Host' };
+const SHORT_ROLE = { bediening: 'Bediening', kok: 'Kok', hulpkok: 'Hulpkok', afwas: 'Afwas', bar: 'Bar', receptie: 'Host', barista: 'Barista' };
 const sortedServices = () => [...SERVICES].sort((a, b) => a.day - b.day || mins(a.start) - mins(b.start));
 
 /* =========================================================
@@ -1174,7 +1182,7 @@ $('#discScroll').addEventListener('scroll', () => {
 });
 
 const TOWNS = {
-  Naarden: [118, 108], Huizen: [262, 78], Bussum: [112, 180], Laren: [232, 196], Baarn: [348, 300], Hilversum: [160, 322], Haarlem: [44, 236]
+  Naarden: [118, 108], Huizen: [262, 78], Bussum: [112, 180], Laren: [232, 196], Baarn: [348, 300], Hilversum: [160, 322], Haarlem: [44, 236], Amsterdam: [56, 150]
 };
 function mapSVG() {
   return `<svg viewBox="0 0 400 440" preserveAspectRatio="none" aria-label="Kaart van 't Gooi">
