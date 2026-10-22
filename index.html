@@ -542,7 +542,8 @@ body{-webkit-font-smoothing:antialiased}
 .photo{background-color:#45729D;background-size:cover;background-repeat:no-repeat}
 .tile-img.photo::after,.hero.photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,33,69,.28) 0%,rgba(3,33,69,0) 38%,rgba(3,33,69,0) 70%,rgba(3,33,69,.22) 100%)}
 .hero-btns{z-index:3}
-.tile-ov{justify-content:flex-end}
+.tile-ov{justify-content:flex-end;gap:8px}
+.role-pill{font-size:14px;font-weight:700;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.92);color:var(--secondary);box-shadow:0 4px 14px rgba(0,0,0,.25)}
 .tile-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.85);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:var(--secondary);display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.2)}
 .tile-arrow .ico{width:18px;height:18px}
 .tile-arrow.l{left:10px}.tile-arrow.r{right:10px}
@@ -825,7 +826,7 @@ const SERVICES = [
     why: 'Je doet bediening, woont binnen 15 km en hebt zaterdag als beschikbaar ingesteld.' },
 
   { id: 'gooimeer', counter: true, type: 'bar', name: 'Strandpaviljoen Gooimeer', initials: 'SG', city: 'Huizen', km: 14, day: 2,
-    start: '15:00', end: '23:00', pause: 30, rate: 22, match: false, spots: 2, applicants: 1,
+    start: '15:00', end: '23:00', pause: 30, rate: 23, match: false, spots: 2, applicants: 1,
     rating: 4.4, reviews: 17, extra: [], street: 'Strandweg 2, 1271 Huizen',
     dress: 'Dresscode: zwart', payout24: true,
     about: 'Herfstfeest op het paviljoen met live dj. Je staat met z’n tweeën achter de bar en zorgt dat niemand lang op een drankje hoeft te wachten.',
@@ -845,7 +846,7 @@ const SERVICES = [
     why: 'Je doet bediening en bent zaterdag beschikbaar. Maar je hebt aangegeven dat je liever avonddiensten draait.' },
 
   { id: 'brink', counter: true, type: 'kok', name: 'Eetcafé De Brink', initials: 'EB', city: 'Laren', km: 11, day: 3,
-    start: '14:00', end: '22:00', pause: 30, rate: 24, match: false, spots: 1, applicants: 0,
+    start: '14:00', end: '22:00', pause: 30, rate: 28, match: false, spots: 1, applicants: 0,
     rating: 4.5, reviews: 19, extra: [], street: 'Brink 21, 1251 Laren',
     dress: 'Dresscode: koksbuis', payout24: true,
     about: 'De vaste kok is op vakantie. Jij draait zelfstandig de keuken met een kleine kaart van zes gerechten en een stagiair als hulp.',
@@ -865,7 +866,7 @@ const SERVICES = [
     why: 'Je bent maandag beschikbaar en de afstand past. Receptie staat niet in je profiel.' },
 
   { id: 'bastion', type: 'bediening', name: 'Vestingcafé Het Bastion', initials: 'VB', city: 'Naarden', km: 12, day: 6,
-    start: '17:30', end: '22:30', pause: 0, rate: 20, match: true, spots: 2, applicants: 1,
+    start: '17:30', end: '22:30', pause: 0, rate: 22, match: true, spots: 2, applicants: 1,
     rating: 4.7, reviews: 31, extra: [], street: 'Vestingwal 3, 1411 Naarden',
     dress: 'Dresscode: zwart', payout24: true,
     about: 'Doordeweekse avond met een groep van 25 voor een diner. Je werkt in een team van drie, met een korte briefing vooraf.',
@@ -875,7 +876,7 @@ const SERVICES = [
     why: 'Je doet bediening, het is een avonddienst en je bent woensdag beschikbaar.' },
 
   { id: 'zuiderhaven', type: 'hulpkok', name: 'Bistro Zuiderhaven', initials: 'BZ', city: 'Huizen', km: 15, day: 8,
-    start: '16:00', end: '22:00', pause: 0, rate: 18, match: false, spots: 1, applicants: 0,
+    start: '16:00', end: '22:00', pause: 0, rate: 20, match: false, spots: 1, applicants: 0,
     rating: 4.1, reviews: 6, extra: [], street: 'Havenkade 17, 1271 Huizen',
     dress: 'Dresscode: koksbuis', payout24: false,
     about: 'Je helpt de chef in een kleine open keuken. Visgerechten en veel garnituren, dus snijwerk is je ding.',
@@ -885,7 +886,7 @@ const SERVICES = [
     why: 'Je bent vrijdag beschikbaar. Hulpkok staat niet in je profiel.' },
 
   { id: 'heidebloem', type: 'bar', name: 'Feestzaal De Heidebloem', initials: 'FH', city: 'Hilversum', km: 2, day: 9,
-    start: '20:00', end: '02:00', pause: 30, rate: 23, match: true, spots: 3, applicants: 2,
+    start: '20:00', end: '02:00', pause: 30, rate: 25, match: true, spots: 3, applicants: 2,
     rating: 4.5, reviews: 14, extra: [], street: 'Heideweg 40, 1214 Hilversum',
     dress: 'Dresscode: zwart', payout24: true,
     about: 'Jubileumfeest met 250 gasten. Grote bar met drie man, de drank is all-in dus je rekent niet af.',
@@ -895,7 +896,7 @@ const SERVICES = [
     why: 'Je staat graag achter de bar, het is dicht bij huis en je bent zaterdagavond beschikbaar.' },
 
   { id: 'zonnehoek', counter: true, type: 'bediening', name: 'Landgoed Hoeve Zonnehoek', initials: 'HZ', city: 'Laren', km: 10, day: 10,
-    start: '12:00', end: '20:00', pause: 30, rate: 21, match: true, last: true, spots: 4, applicants: 3,
+    start: '12:00', end: '20:00', pause: 30, rate: 24, match: true, last: true, spots: 4, applicants: 3,
     rating: 4.8, reviews: 27, extra: [], street: 'Zonnehoekweg 1, 1251 Laren',
     dress: 'Dresscode: zwart', payout24: true,
     about: 'Zondagse high tea en diner op het landgoed. Rustig begin, druk vanaf 17:00.',
@@ -923,6 +924,7 @@ const photoOf = id => 'photo ' + (PHOTOS[id] ? PHOTOS[id][0] : 'ph' + PHOTO[id])
 SERVICES.forEach(s => {
   if (!s.travel) s.travel = { car: Math.round(s.km * 1.5 + 3), ov: Math.round(s.km * 2.5 + 10), bike: Math.round(s.km * 3.7) };
 });
+const SHORT_ROLE = { bediening: 'Bediening', kok: 'Kok', hulpkok: 'Hulpkok', afwas: 'Afwas', bar: 'Bar', receptie: 'Host' };
 const sortedServices = () => [...SERVICES].sort((a, b) => a.day - b.day || mins(a.start) - mins(b.start));
 
 /* =========================================================
@@ -1072,6 +1074,7 @@ function tileHTML(s, opts = {}) {
       ${PHOTOS[s.id] ? `<button class="tile-arrow l" data-tslide="-1" aria-label="Vorige foto">${I.back}</button><button class="tile-arrow r" data-tslide="1" aria-label="Volgende foto">${I.right}</button>
         <div class="tile-dots">${PHOTOS[s.id].map((_, i) => `<i class="${i === 0 ? 'on' : ''}"></i>`).join('')}</div>` : ''}
       <div class="tile-ov">
+        <span class="role-pill">${SHORT_ROLE[s.type]}</span>
         <span class="rate"><small>gem.</small> ${euro(s.rate)}/u</span>
       </div>
     </div>
