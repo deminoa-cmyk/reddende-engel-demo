@@ -551,6 +551,18 @@ body{-webkit-font-smoothing:antialiased}
 .tile-img.photo::after,.hero.photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,33,69,.28) 0%,rgba(3,33,69,0) 38%,rgba(3,33,69,0) 70%,rgba(3,33,69,.22) 100%)}
 .hero-btns{z-index:3}
 .tile-ov{justify-content:flex-end;gap:8px}
+.nset{background:#F5F7F9;border-radius:16px;padding:12px 14px;margin-bottom:10px;transition:opacity .2s}
+.nset.off .nrange,.nset.off .bidrange-lbl{opacity:.35}
+.nrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 0;cursor:pointer}
+.nrow + .nrow{border-top:1px solid #E6E9EE;margin-top:8px;padding-top:12px}
+.nrow b{display:block;font-size:15px}
+.nrow small{display:block;font-size:13px;color:var(--sub);line-height:1.35;margin-top:2px}
+.nrow small span{color:var(--secondary);font-weight:700}
+.nrange{--zc:#45729D;margin:12px 0 6px}
+.ios-switch{-webkit-appearance:none;appearance:none;flex:none;width:51px;height:31px;border-radius:16px;background:#E2E5EA;position:relative;cursor:pointer;transition:background .2s;margin:0}
+.ios-switch::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:transform .2s}
+.ios-switch:checked{background:#34C759}
+.ios-switch:checked::after{transform:translateX(20px)}
 .chat-quick{padding:0 12px;background:rgba(255,255,255,.96)}
 .chat-quick:empty{display:none}
 .quick-msg{display:flex;gap:8px;align-items:flex-start;width:100%;text-align:left;margin-top:8px;padding:10px 12px;border-radius:14px;border:1.5px solid #77B2BF;background:#F2F8FA;color:var(--secondary);font-size:13.5px;font-weight:600;line-height:1.35}
@@ -624,7 +636,7 @@ body{-webkit-font-smoothing:antialiased}
           <div class="hdr-top">
             <div class="logo" data-logo id="logoMain"></div>
             <div class="hdr-icons">
-              <button class="iconbtn" data-toast="Meldingen zijn niet onderdeel van deze demo" aria-label="Meldingen"><svg class="ico" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></button>
+              <button class="iconbtn" id="bellBtn" aria-label="Meldingen instellen"><svg class="ico" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></button>
               <button class="iconbtn" data-toast="Zoeken is niet onderdeel van deze demo" aria-label="Zoeken"><svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
             </div>
           </div>
@@ -960,7 +972,7 @@ const photoOf = id => 'photo ' + (PHOTOS[id] ? PHOTOS[id][0] : 'ph' + PHOTO[id])
 SERVICES.forEach(s => {
   if (!s.travel) s.travel = { car: Math.round(s.km * 1.5 + 3), ov: Math.round(s.km * 2.5 + 10), bike: Math.round(s.km * 3.7) };
 });
-const SHORT_ROLE = { bediening: 'Bediening', kok: 'Kok', hulpkok: 'Hulpkok', afwas: 'Afwas', bar: 'Bar', receptie: 'Host', barista: 'Barista' };
+const SHORT_ROLE = { bediening: 'Bediening', kok: 'Kok', hulpkok: 'Hulpkok', afwas: 'Afwas', bar: 'Bardienst', receptie: 'Host', barista: 'Barista' };
 const sortedServices = () => [...SERVICES].sort((a, b) => a.day - b.day || mins(a.start) - mins(b.start));
 
 /* =========================================================
@@ -969,7 +981,8 @@ const sortedServices = () => [...SERVICES].sort((a, b) => a.day - b.day || mins(
 const S = {
   current: 'lock', stack: [], selDay: 0, view: 'lijst', mapSel: null,
   favs: new Set(), applied: [], detailId: null, detailTab: 'overzicht', extraSel: new Set(),
-  entry: null, mineTab: 'aangemeld', adviceAsked: {}, chat: [], chatAbout: null, chatted: [], bids: {}, bidRate: 0, pendingBid: null
+  entry: null, mineTab: 'aangemeld', adviceAsked: {}, chat: [], chatAbout: null, chatted: [],
+  notif: { kmOn: true, km: 15, rateOn: false, rate: 23, before24: true, accepted: true }, bids: {}, bidRate: 0, pendingBid: null
 };
 
 /* =========================================================
@@ -1085,6 +1098,53 @@ $('#chatForm').addEventListener('submit', e => {
   inp.value = '';
   sendChat(t);
 });
+
+/* =========================================================
+   Meldingen instellen (achter het belletje)
+   ========================================================= */
+const NOTIF_KM = [1, 50], NOTIF_RATE = [17, 40];
+function openNotifSheet() {
+  const n = S.notif, sh = $('#sheet');
+  sh.dataset.kind = 'notif';
+  sh.innerHTML = `<div class="grab"></div>
+    <button class="sheet-x" id="sheetX" aria-label="Sluiten"><svg class="ico" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    <h2>Meldingen</h2>
+    <p class="sub">Kies wanneer je een melding wilt krijgen.</p>
+    <div class="nset">
+      <label class="nrow"><span><b>Klussen in de buurt</b><small>Melding bij een nieuwe klus binnen <span id="nKmTxt"></span> km</small></span><input type="checkbox" class="ios-switch" id="nKmOn" ${n.kmOn ? 'checked' : ''}></label>
+      <input type="range" class="bidrange nrange" id="nKm" min="${NOTIF_KM[0]}" max="${NOTIF_KM[1]}" step="1" value="${n.km}" aria-label="Afstand in kilometers">
+      <div class="bidrange-lbl"><span>${NOTIF_KM[0]} km</span><span>${NOTIF_KM[1]} km</span></div>
+    </div>
+    <div class="nset">
+      <label class="nrow"><span><b>Klussen met een goed tarief</b><small>Melding bij een nieuwe klus met een gemiddeld uurtarief van minimaal <span id="nRateTxt"></span></small></span><input type="checkbox" class="ios-switch" id="nRateOn" ${n.rateOn ? 'checked' : ''}></label>
+      <input type="range" class="bidrange nrange" id="nRate" min="${NOTIF_RATE[0]}" max="${NOTIF_RATE[1]}" step="1" value="${n.rate}" aria-label="Minimaal gemiddeld uurtarief">
+      <div class="bidrange-lbl"><span>${euro(NOTIF_RATE[0])}</span><span>${euro(NOTIF_RATE[1])}</span></div>
+    </div>
+    <div class="nset">
+      <label class="nrow"><span><b>24 uur voor je dienst</b><small>Herinnering een dag van tevoren</small></span><input type="checkbox" class="ios-switch" id="nBefore" ${n.before24 ? 'checked' : ''}></label>
+      <label class="nrow"><span><b>Dienst geaccepteerd</b><small>Melding zodra een zaak je aanmelding accepteert</small></span><input type="checkbox" class="ios-switch" id="nAccepted" ${n.accepted ? 'checked' : ''}></label>
+    </div>
+    <button class="btn yellow block" id="saveNotif">Opslaan</button>`;
+  updateNotifSheet();
+  $('#sheetBg').classList.add('open');
+  sh.classList.add('open');
+}
+function updateNotifSheet() {
+  const km = $('#nKm'), rate = $('#nRate');
+  $('#nKmTxt').textContent = km.value;
+  $('#nRateTxt').textContent = euro(+rate.value);
+  [[km, NOTIF_KM, $('#nKmOn')], [rate, NOTIF_RATE, $('#nRateOn')]].forEach(([r, [lo, hi], on]) => {
+    r.style.setProperty('--p', `${(r.value - lo) / (hi - lo) * 100}%`);
+    r.disabled = !on.checked;
+    r.closest('.nset').classList.toggle('off', !on.checked);
+  });
+}
+function saveNotif() {
+  S.notif = { kmOn: $('#nKmOn').checked, km: +$('#nKm').value, rateOn: $('#nRateOn').checked, rate: +$('#nRate').value,
+    before24: $('#nBefore').checked, accepted: $('#nAccepted').checked };
+  closeSheet();
+  toast('Meldingen opgeslagen');
+}
 
 /* =========================================================
    Toast
@@ -1464,7 +1524,7 @@ function sendBid() {
 let sheetDrag = null;
 $('#sheet').addEventListener('pointerdown', e => {
   const sh = $('#sheet');
-  if (sh.dataset.kind !== 'bid' || e.target.closest('button,input')) return;
+  if (!['bid', 'notif'].includes(sh.dataset.kind) || e.target.closest('button,input,label')) return;
   sheetDrag = { y: e.clientY, dy: 0 };
   sh.classList.add('dragging');
 });
@@ -1587,6 +1647,8 @@ $('#app').addEventListener('click', e => {
   if (mt) { S.mineTab = mt.dataset.mt; return renderMine(); }
   if (el.closest('#applyBtn')) { S.pendingBid = null; return openSheet(); }
   if (el.closest('#confirmBtn')) return confirmApply();
+  if (el.closest('#bellBtn')) return openNotifSheet();
+  if (el.closest('#saveNotif')) return saveNotif();
   const slide = el.closest('[data-slide]');
   if (slide) {
     const list = PHOTOS[S.detailId], hero = $('#hero');
@@ -1628,9 +1690,11 @@ $('#app').addEventListener('click', e => {
 // De app-container zelf mag nooit scrollen (focus kan dat anders veroorzaken)
 $('#app').addEventListener('scroll', e => { if (e.target.id === 'app') e.target.scrollTop = 0; });
 $('#app').addEventListener('input', e => {
+  if (e.target.id === 'nKm' || e.target.id === 'nRate') { updateNotifSheet(); return; }
   if (e.target.id === 'bidRange') { S.bidRate = +e.target.value; updateBidSheet(); }
 });
 $('#app').addEventListener('change', e => {
+  if (e.target.id === 'nKmOn' || e.target.id === 'nRateOn') { updateNotifSheet(); return; }
   const x = e.target.closest('[data-extra]');
   if (x) { const i = +x.dataset.extra; x.checked ? S.extraSel.add(i) : S.extraSel.delete(i); }
 });
