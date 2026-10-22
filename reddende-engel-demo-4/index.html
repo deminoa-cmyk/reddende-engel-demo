@@ -357,7 +357,7 @@ body{-webkit-font-smoothing:antialiased}
 .iconbtn{background:rgba(255,255,255,.2);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .roundbtn{background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 4px 14px rgba(0,0,0,.18)}
 /* Ontdek */
-.hdr{border-radius:0 0 28px 28px;padding-bottom:26px;background:radial-gradient(130% 150% at 100% 0%,#8CC3CF 0%,#5E92B3 45%,#2F5A8D 100%)}
+.hdr{border-radius:0 0 24px 24px;padding-bottom:14px;background:radial-gradient(130% 150% at 100% 0%,#8CC3CF 0%,#5E92B3 45%,#2F5A8D 100%)}
 .hdr h1{font-size:30px;letter-spacing:-.01em;margin-top:22px}
 .hdr p{opacity:.85}
 .chips{padding:16px 16px 6px}
@@ -554,6 +554,8 @@ body{-webkit-font-smoothing:antialiased}
 .tile-img.photo::after,.hero.photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,33,69,.28) 0%,rgba(3,33,69,0) 38%,rgba(3,33,69,0) 70%,rgba(3,33,69,.22) 100%)}
 .hero-btns{z-index:3}
 .tile-ov{justify-content:flex-end;gap:8px}
+.tile .name{margin-top:0}
+.tile-body{padding-top:12px}
 .nset{background:#F5F7F9;border-radius:16px;padding:12px 14px;margin-bottom:10px;transition:opacity .2s}
 .nset.off .nrange,.nset.off .bidrange-lbl{opacity:.35}
 .nrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 0;cursor:pointer}
@@ -643,8 +645,6 @@ body{-webkit-font-smoothing:antialiased}
               <button class="iconbtn" data-toast="Zoeken is niet onderdeel van deze demo" aria-label="Zoeken"><svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
             </div>
           </div>
-          <h1>Vind jouw dienst</h1>
-          <p>12 diensten bij jou in de buurt, de komende 2 weken</p>
         </header>
         <div class="chips">
           <button class="chip" data-toast="Filters werken niet in deze demo">Dienstsoort <svg class="ico" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
@@ -1189,7 +1189,6 @@ function tileHTML(s, opts = {}) {
       </div>
     </div>
     <div class="tile-body">
-      <div class="type">${t.label}</div>
       <div class="name">${s.name}</div>
       <div class="meta">${I.pin}${s.city} · ${s.km} km<span class="sep"></span>${I.clock}${opts.showDate ? cap(fmtShort(s.day)) + ' · ' : ''}${s.start} – ${s.end}</div>
       <div class="tile-foot">
