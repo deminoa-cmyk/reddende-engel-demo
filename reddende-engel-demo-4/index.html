@@ -968,7 +968,7 @@ const byId = id => SERVICES.find(s => s.id === id);
 // Welke foto bij welke zaak hoort (3 foto's, gedeeld door de 10 zaken)
 const PHOTO = { lindehof: 2, zonnehoek: 2, spieghel: 2, vista: 1, bastion: 1, brink: 1, zuiderhaven: 1, gooimeer: 3, heidebloem: 3, bosrand: 3 };
 // Zaken met meerdere foto's: in het dienstdetail blader je er met pijltjes doorheen
-const PHOTOS = { spaarne: ['hp1', 'hp2', 'hp3', 'hp4'], bosrand: ['mz1', 'mz2', 'mz3', 'mz4'], gooier: ['gc1', 'gc2', 'gc3', 'gc4'], vista: ['ph1', 'cw1', 'cw2', 'cw3'] };
+const PHOTOS = { spaarne: ['hp1', 'hp2', 'hp3', 'hp4'], bosrand: ['mz3', 'mz1', 'mz2', 'mz4'], gooier: ['gc1', 'gc2', 'gc3', 'gc4'], vista: ['ph1', 'cw1', 'cw2', 'cw3'] };
 // Per zaak een eigen uitsnede van de foto (de coworking space toont de koffiebar onderin de foto)
 const PHOTO_POS = { vista: 'pos-low' };
 const photoOf = id => 'photo ' + (PHOTOS[id] ? PHOTOS[id][0] : 'ph' + PHOTO[id]) + (PHOTO_POS[id] ? ' ' + PHOTO_POS[id] : '');
