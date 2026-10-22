@@ -28,18 +28,19 @@ svg{display:block}
 /* ---------- Demo-balk + stage ---------- */
 .demobar{position:fixed;top:0;left:0;right:0;height:var(--bar-h);z-index:100;background:#032145;color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;letter-spacing:.02em}
 .demobar b{color:var(--yellow);margin-right:6px}
-.stage{position:fixed;top:var(--bar-h);left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:88px;padding:28px 32px}
+.stage{position:fixed;top:var(--bar-h);left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:88px;padding:16px 32px;overflow:auto}
 .side{justify-self:end;max-width:300px;color:#032145}
 .side .head{font-size:30px;line-height:1.05;margin-bottom:14px}
 .side p{font-size:15px;line-height:1.5;margin:0 0 10px;color:#3A4656}
 .side .small{font-size:13px;color:#6B7684}
 
 /* iPhone-frame: op groot scherm vergroot weergegeven (zoom), de hoogte past altijd in beeld */
-.device{--z:1.16;zoom:var(--z);position:relative;padding:13px;border-radius:66px;background:#141416;
+.device{--z:.85;zoom:var(--z);align-self:start;margin:auto 0;position:relative;padding:13px;border-radius:66px;background:#141416;
   box-shadow:inset 0 0 0 1.5px #3a3a3d,0 0 0 2px #c3c6cc,0 0 0 3.5px #8e9198,0 60px 90px -30px rgba(15,25,45,.35),0 20px 45px rgba(15,25,45,.16)}
 .device::before{content:"";position:absolute;left:-5.5px;top:190px;width:4px;height:58px;border-radius:2px 0 0 2px;background:#a9acb2;box-shadow:0 74px 0 #a9acb2}
 .device::after{content:"";position:absolute;right:-5.5px;top:240px;width:4px;height:92px;border-radius:0 2px 2px 0;background:#a9acb2}
-#app{position:relative;width:430px;height:calc(min(1040px,100vh - var(--bar-h) - 56px) / var(--z) - 26px);background:var(--bg);border-radius:53px;overflow:hidden;overflow:clip}
+/* Vaste verhouding en maat van een iPhone 15 Pro (393 × 852 punten), op 85% zodat hij op een laptopscherm past; verandert niet mee met het venster */
+#app{position:relative;width:393px;height:852px;background:var(--bg);border-radius:53px;overflow:hidden;overflow:clip}
 .island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:124px;height:36px;border-radius:20px;background:#000;z-index:60;pointer-events:none}
 .statusbar{position:absolute;top:0;left:0;right:0;height:var(--sb);display:flex;align-items:center;justify-content:space-between;padding:2px 30px 0 48px;z-index:58;color:#fff;font:600 16px/1 -apple-system,BlinkMacSystemFont,'Archivo',sans-serif;pointer-events:none;transition:background .2s,color .2s}
 .statusbar .sb-icons{display:flex;gap:6px;align-items:center}
@@ -49,7 +50,6 @@ svg{display:block}
 .homeind{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:136px;height:5px;border-radius:3px;background:#0A0A0A;z-index:61;pointer-events:none}
 #app.on-lock .homeind{background:#fff}
 @media (max-width:1180px){.side{display:none}.stage{grid-template-columns:1fr auto 1fr;gap:20px}}
-@media (max-height:760px){.device{--z:1.08}}
 @media (max-width:600px){
   .stage{display:block;padding:0}
   .side{display:none}
@@ -422,6 +422,9 @@ body{-webkit-font-smoothing:antialiased}
 .bidrange{-webkit-appearance:none;appearance:none;display:block;width:100%;height:8px;border-radius:4px;margin:16px 0 8px;background:linear-gradient(90deg,var(--zc) 0 var(--p,0%),#E7E9EE var(--p,0%) 100%);outline:none;cursor:pointer}
 .bidrange::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:0 2px 10px rgba(16,24,40,.25),0 0 0 1px rgba(16,24,40,.06)}
 .bidrange::-moz-range-thumb{width:28px;height:28px;border:0;border-radius:50%;background:#fff;box-shadow:0 2px 10px rgba(16,24,40,.25),0 0 0 1px rgba(16,24,40,.06)}
+.bidrange-wrap{position:relative;padding-bottom:16px}
+.avg-tick{position:absolute;top:22px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;font-size:10.5px;font-weight:700;color:var(--sub);pointer-events:none}
+.avg-tick i{width:2px;height:6px;border-radius:1px;background:#9AA3AF;margin-bottom:1px}
 .bidrange-lbl{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);font-weight:600}
 .bidstatus{margin:16px 0 14px}
 .bidchip{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:999px;font-size:13.5px;background:var(--zb);color:var(--zt);transition:background .2s,color .2s}
@@ -465,6 +468,36 @@ body{-webkit-font-smoothing:antialiased}
 .wa-icon{width:22px;height:22px;border-radius:6px;background:linear-gradient(180deg,#5FFC7B 0%,#28D146 100%);display:grid;place-items:center}
 .wa-icon svg{width:15px;height:15px}
 .lock-hint{margin-top:10px}
+/* Chat */
+.chat-hdr{display:flex;align-items:center;gap:10px;padding:calc(var(--sb) + 6px) 14px 12px;background:rgba(255,255,255,.96);border-bottom:1px solid rgba(0,0,0,.06)}
+.chat-back{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:var(--secondary)}
+.chat-av{width:40px;height:40px;border-radius:50%;background:linear-gradient(210deg,#77B2BF 0%,#45729D 100%);color:#fff;font-weight:700;font-size:16px;display:grid;place-items:center;flex:none}
+.chat-av.sm{width:26px;height:26px;font-size:12px}
+.chat-who b{display:block;font-size:16px}
+.chat-who span{font-size:12.5px;color:var(--sub);display:flex;align-items:center;gap:6px}
+.chat-who i{width:8px;height:8px;border-radius:50%;background:#22C55E}
+.chat-body{padding:12px 14px 16px;display:flex;flex-direction:column;gap:8px}
+.chat-day{align-self:center;font-size:12px;font-weight:600;color:var(--sub);background:#E9ECF1;border-radius:999px;padding:4px 10px;margin:4px 0}
+.chat-about{display:flex;gap:10px;align-items:center;background:#fff;border-radius:16px;padding:10px;box-shadow:var(--shadow);margin-bottom:4px}
+.chat-about .mi{width:44px;height:44px;border-radius:12px;flex:none}
+.chat-about b{display:block;font-size:14px}
+.chat-about span{font-size:12.5px;color:var(--sub)}
+.bubble{max-width:78%;padding:9px 12px 6px;border-radius:18px;font-size:14.5px;line-height:1.4;animation:inFade .2s ease both}
+.bubble small{display:block;text-align:right;font-size:10.5px;opacity:.6;margin-top:2px}
+.bubble.b-them{align-self:flex-start;background:#fff;border-bottom-left-radius:6px;box-shadow:0 1px 2px rgba(16,24,40,.06)}
+.bubble.b-me{align-self:flex-end;background:linear-gradient(210deg,#77B2BF 0%,#45729D 100%);color:#fff;border-bottom-right-radius:6px}
+.bubble.typing{display:flex;gap:4px;padding:12px 14px}
+.bubble.typing i{width:7px;height:7px;border-radius:50%;background:#A0A8B4;animation:blink 1s infinite}
+.bubble.typing i:nth-child(2){animation-delay:.15s}.bubble.typing i:nth-child(3){animation-delay:.3s}
+@keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+.chat-input{display:flex;gap:8px;padding:8px 12px 10px;background:rgba(255,255,255,.96);border-top:1px solid rgba(0,0,0,.06)}
+.chat-input input{flex:1;height:42px;border-radius:21px;border:1px solid #E1E4EA;background:#F5F6F8;padding:0 16px;font:inherit;font-size:15px;outline:none}
+.chat-input input:focus{border-color:#77B2BF;background:#fff}
+.chat-send{width:42px;height:42px;border-radius:50%;background:#45729D;color:#fff;display:grid;place-items:center;flex:none}
+.chat-btn{flex:none !important;background:rgba(255,255,255,.22);color:#fff;text-transform:none;letter-spacing:0;padding:0 14px !important;gap:8px}
+.chat-btn .chat-av.sm{background:#fff;color:#45729D}
+.tile.pulse{animation:pulseTile 1.2s ease 2}
+@keyframes pulseTile{0%,100%{box-shadow:var(--shadow)}50%{box-shadow:0 0 0 4px #FFC107,var(--shadow)}}
 /* Restaurantfoto's */
 .photo{background-color:#45729D;background-size:cover;background-repeat:no-repeat}
 .tile-img.photo::after,.hero.photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,33,69,.28) 0%,rgba(3,33,69,0) 38%,rgba(3,33,69,0) 70%,rgba(3,33,69,.22) 100%)}
@@ -580,10 +613,18 @@ body{-webkit-font-smoothing:antialiased}
       <div class="scroll"><div class="list" id="mineList"></div></div>
     </section>
 
-    <!-- Placeholders -->
+    <!-- Chat met de planner -->
     <section class="screen tabbed" id="scr-berichten">
-      <header class="subhdr"><div class="subhdr-row"><button class="iconbtn" data-back aria-label="Terug"><svg class="ico" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button><h1>Berichten</h1></div></header>
-      <div class="scroll"><div class="empty"><div class="ei"><svg class="ico" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><b>Niet onderdeel van deze demo</b><p>Deze demo gaat over het vinden, beoordelen en aannemen van een dienst.</p><button class="btn" data-tab="discover">Naar ontdek</button></div></div>
+      <header class="chat-hdr">
+        <button class="chat-back" data-back aria-label="Terug"><svg class="ico" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+        <span class="chat-av">S</span>
+        <div class="chat-who"><b>Stijn</b><span><i></i>Planner · Reddende Engel</span></div>
+      </header>
+      <div class="scroll chat-body" id="chatBody"></div>
+      <form class="chat-input" id="chatForm" autocomplete="off">
+        <input id="chatText" placeholder="Bericht aan Stijn" aria-label="Bericht aan Stijn">
+        <button type="submit" class="chat-send" aria-label="Verstuur"><svg class="ico" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      </form>
     </section>
     <section class="screen tabbed" id="scr-profiel">
       <header class="subhdr"><div class="subhdr-row"><button class="iconbtn" data-back aria-label="Terug"><svg class="ico" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button><h1>Profiel</h1></div></header>
@@ -834,7 +875,7 @@ const sortedServices = () => [...SERVICES].sort((a, b) => a.day - b.day || mins(
 const S = {
   current: 'lock', stack: [], selDay: 0, view: 'lijst', mapSel: null,
   favs: new Set(), applied: [], detailId: null, detailTab: 'overzicht', extraSel: new Set(),
-  entry: null, mineTab: 'aangemeld', adviceAsked: {}, bids: {}, bidRate: 0, pendingBid: null
+  entry: null, mineTab: 'aangemeld', adviceAsked: {}, chat: [], chatAbout: null, bids: {}, bidRate: 0, pendingBid: null
 };
 
 /* =========================================================
@@ -871,6 +912,7 @@ function goTab(tab) {
   S.stack = [];
   if (tab === 'discover') renderDiscover();
   if (tab === 'mine') renderMine();
+  if (tab === 'berichten') { S.chatAbout = null; renderChat(); }
   if (S.current === tab) return;
   go(tab, 'fade', false);
   if (TABBED.includes(tab)) S.stack = [];
@@ -893,10 +935,54 @@ function updateStatusBar() {
     solid = sc.scrollTop > (first ? first.offsetHeight - 50 : 0);
   }
   app.classList.toggle('sb-solid', solid);
-  app.classList.toggle('sb-dark', S.current === 'confirm');
+  app.classList.toggle('sb-dark', S.current === 'confirm' || S.current === 'berichten');
   app.classList.toggle('on-lock', S.current === 'lock');
 }
 $('#app').addEventListener('scroll', e => { if (e.target.classList && e.target.classList.contains('scroll')) updateStatusBar(); }, true);
+
+/* =========================================================
+   Chat met planner Stijn (demo: vaste antwoorden, niets wordt verstuurd)
+   ========================================================= */
+const nowTime = () => '14:' + String(32 + Math.min(27, S.chat.length)).padStart(2, '0');
+function chatWelcome() {
+  if (!S.chat.length) S.chat.push({ from: 'stijn', time: '14:32', text: 'Hoi! Ik ben Stijn, planner bij Reddende Engel. Vragen over een dienst, je tarief of de zaak? Stuur me gerust een bericht.' });
+}
+function renderChat() {
+  chatWelcome();
+  const about = S.chatAbout && byId(S.chatAbout);
+  $('#chatBody').innerHTML = `<div class="chat-day">Vandaag</div>
+    ${about ? `<div class="chat-about"><span class="mi ${photoOf(about.id)}"></span><div><b>${about.name}</b><span>${TYPES[about.type].label} · ${cap(fmtShort(about.day))} · ${about.start} – ${about.end}</span></div></div>` : ''}
+    ${S.chat.map(m => m.typing
+      ? `<div class="bubble b-them typing"><i></i><i></i><i></i></div>`
+      : `<div class="bubble ${m.from === 'me' ? 'b-me' : 'b-them'}">${m.text}<small>${m.time}</small></div>`).join('')}`;
+  const b = $('#chatBody'); b.scrollTop = b.scrollHeight;
+}
+function openChat(aboutId) {
+  S.chatAbout = aboutId || null;
+  renderChat();
+  go('berichten', 'fwd');
+}
+function sendChat(text) {
+  S.chat.push({ from: 'me', text: text.replace(/[<>&]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c])), time: nowTime() });
+  const typing = { typing: true };
+  S.chat.push(typing);
+  renderChat();
+  const about = S.chatAbout && byId(S.chatAbout);
+  const reply = /tarief|uur|€|euro|geld|betaal/i.test(text)
+    ? `Goede vraag! ${about ? `Bij ${about.name} ` : 'Bij de meeste zaken '}zou ik iets rond het gemiddelde voorstellen, of iets erboven als je veel ervaring hebt. Ik kijk het even voor je na.`
+    : `Dank je! ${about ? `Ik kijk even naar de dienst bij ${about.name} en ` : 'Ik kijk er even naar en '}laat het je zo weten. 👍`;
+  setTimeout(() => {
+    S.chat.splice(S.chat.indexOf(typing), 1, { from: 'stijn', text: reply, time: nowTime() });
+    if (S.current === 'berichten') renderChat();
+  }, 1600);
+}
+$('#chatForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const inp = $('#chatText'), t = inp.value.trim();
+  if (!t) return;
+  inp.value = '';
+  sendChat(t);
+});
 
 /* =========================================================
    Toast
@@ -1117,6 +1203,7 @@ function renderDetail() {
       <span class="avail">${applied ? `Wacht op bevestiging${bid ? `<br>Jouw tarief: ${euro(bid)}/u` : ''}` : sub}</span>
     </div>
     <div class="dbar-btns">
+      <button class="btn chat-btn" data-chat="${s.id}" aria-label="Chat met planner Stijn"><span class="chat-av sm">S</span>Chat</button>
       ${applied ? `<button class="btn" disabled>${I.check} Aangemeld</button>`
         : `<button class="btn yellow" id="bidBtn">Meld je aan</button>`}
     </div>`;
@@ -1209,16 +1296,19 @@ function closeSheet() {
 }
 
 /* Doe een bod */
-const BID_STEP = 0.5, BID_MAX = 8;
+// Je kiest je tarief tussen €17 en €60 per uur, in stappen van €0,50
+const BID_STEP = 0.5, BID_MIN = 17, BID_TOP = 60;
+const bidPct = r => `${(r - BID_MIN) / (BID_TOP - BID_MIN) * 100}%`;
 // Verzonnen grenzen per dienst, op basis van wat de zaak gemiddeld aan freelancers betaalt: t/m de eerste rond het gemiddelde, t/m de tweede erboven, daarna ver erboven
 const BID_LIMITS = { bosrand: [19, 21], lindehof: [22, 24], gooimeer: [23, 25], vista: [19.5, 21], brink: [25, 27.5],
   spieghel: [18.5, 20], bastion: [21, 23], zuiderhaven: [18.5, 20.5], heidebloem: [24.5, 27], zonnehoek: [22, 24] };
 const BID_ZONES = {
-  g: ['Past bij wat deze zaak gemiddeld betaalt', 'Dit sluit aan bij wat de zaak gewend is te betalen.'],
+  l: ['Onder het gemiddelde van deze zaak', 'Dit is minder dan wat de zaak gemiddeld betaalt.'],
+  g:['Past bij wat deze zaak gemiddeld betaalt', 'Dit sluit aan bij wat de zaak gewend is te betalen.'],
   y: ['Boven het gemiddelde van deze zaak', 'De zaak kijkt of ze hiermee akkoord gaat.'],
   r: ['Ver boven wat deze zaak gemiddeld betaalt', 'Dit is meer dan de zaak meestal betaalt. De kans is kleiner.']
 };
-const bidZone = (s, r) => { const [ok, max] = BID_LIMITS[s.id]; return r <= ok ? 'g' : r <= max ? 'y' : 'r'; };
+const bidZone = (s, r) => { const [ok, max] = BID_LIMITS[s.id]; return r < s.rate ? 'l' : r <= ok ? 'g' : r <= max ? 'y' : 'r'; };
 function openBidSheet() {
   const s = byId(S.detailId);
   S.bidRate = s.rate;
@@ -1233,8 +1323,11 @@ function openBidSheet() {
       <div class="step-val"><b id="bidRate"></b><small>per uur</small></div>
       <button class="step" data-step="1" aria-label="Hoger">+</button>
     </div>
-    <input type="range" class="bidrange" id="bidRange" min="${s.rate}" max="${s.rate + BID_MAX}" step="${BID_STEP}" value="${s.rate}" aria-label="Kies je uurtarief">
-    <div class="bidrange-lbl"><span>Gemiddeld ${euro(s.rate)}</span><span>${euro(s.rate + BID_MAX)}</span></div>
+    <div class="bidrange-wrap">
+      <input type="range" class="bidrange" id="bidRange" min="${BID_MIN}" max="${BID_TOP}" step="${BID_STEP}" value="${s.rate}" aria-label="Kies je uurtarief">
+      <span class="avg-tick" style="left:${bidPct(s.rate)}"><i></i>gem.</span>
+    </div>
+    <div class="bidrange-lbl"><span>${euro(BID_MIN)}</span><span>${euro(BID_TOP)}</span></div>
     <div class="bidstatus"><span class="bidchip" id="bidChip"><i></i><b></b></span><span class="bidsub" id="bidSub"></span></div>
     <div class="sumtotal"><span>Verdien ~</span><b id="bidEarn"></b></div>
     <button class="btn yellow block" id="sendBid">Ga verder met dit tarief</button>
@@ -1252,7 +1345,7 @@ function adviceHTML(s, step) {
     </div>`;
   return `<button class="advice-link" id="askPlanner">${I.chat}<span>Vraag tariefadvies aan planner</span>${I.right}</button>`;
 }
-const ZONE_COLORS = { g: ['#16A34A', '#ECFDF3', '#166534'], y: ['#D97706', '#FFF7E6', '#92400E'], r: ['#DC2626', '#FEF2F2', '#991B1B'] };
+const ZONE_COLORS = { l: ['#16A34A', '#ECFDF3', '#166534'], g:['#16A34A', '#ECFDF3', '#166534'], y: ['#D97706', '#FFF7E6', '#92400E'], r: ['#DC2626', '#FEF2F2', '#991B1B'] };
 function updateBidSheet() {
   const s = byId(S.detailId), r = S.bidRate, z = bidZone(s, r), [zc, zb, zt] = ZONE_COLORS[z];
   const sh = $('#sheet'), range = $('#bidRange');
@@ -1260,11 +1353,11 @@ function updateBidSheet() {
   $('#bidRate').textContent = euro(r);
   $('#bidEarn').textContent = euro(hoursOf(s) * r);
   range.value = r;
-  range.style.setProperty('--p', `${(r - s.rate) / BID_MAX * 100}%`);
+  range.style.setProperty('--p', bidPct(r));
   $('#bidChip b').textContent = BID_ZONES[z][0];
   $('#bidSub').textContent = BID_ZONES[z][1] + ' Gebaseerd op wat deze zaak gemiddeld aan freelancers betaalt; de zaak beslist altijd zelf.';
-  $('[data-step="-1"]').disabled = r <= s.rate;
-  $('[data-step="1"]').disabled = r >= s.rate + BID_MAX;
+  $('[data-step="-1"]').disabled = r <= BID_MIN;
+  $('[data-step="1"]').disabled = r >= BID_TOP;
 }
 function sendBid() {
   S.pendingBid = S.bidRate;
@@ -1300,7 +1393,7 @@ function confirmApply() {
   S.pendingBid = null;
   closeSheet();
   const via = S.entry === 'melding' ? 'melding → app' : 'Ontdek → app';
-  const bidLine = { g: 'Dit past bij wat de zaak gemiddeld betaalt.', y: 'Dit ligt boven het gemiddelde van de zaak.', r: 'Dit ligt ver boven wat de zaak gemiddeld betaalt.' };
+  const bidLine = { l: 'Dit ligt onder wat de zaak gemiddeld betaalt.', g:'Dit past bij wat de zaak gemiddeld betaalt.', y: 'Dit ligt boven het gemiddelde van de zaak.', r: 'Dit ligt ver boven wat de zaak gemiddeld betaalt.' };
   $('#scr-confirm').innerHTML = `
     <div class="cf-top"><button class="roundbtn" data-back aria-label="Terug">${I.back}</button></div>
     <div class="cf-check"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
@@ -1358,7 +1451,7 @@ $('#app').addEventListener('click', e => {
   const tab = el.closest('[data-tab]');
   if (tab) { closeSheet(); return goTab(tab.dataset.tab); }
   const open = el.closest('[data-open]');
-  if (open) return openDetail(open.dataset.open, S.current === 'mine' ? null : 'ontdek');
+  if (open) return openDetail(open.dataset.open, S.current === 'mine' ? null : (S.entry === 'melding' ? 'melding' : 'ontdek'));
   const day = el.closest('[data-day]');
   if (day) {
     S.mapSel = null;
@@ -1380,11 +1473,13 @@ $('#app').addEventListener('click', e => {
   if (mt) { S.mineTab = mt.dataset.mt; return renderMine(); }
   if (el.closest('#applyBtn')) { S.pendingBid = null; return openSheet(); }
   if (el.closest('#confirmBtn')) return confirmApply();
+  const chat = el.closest('[data-chat]');
+  if (chat) return openChat(chat.dataset.chat);
   if (el.closest('#bidBtn')) return openBidSheet();
   const step = el.closest('[data-step]');
   if (step) {
     const s = byId(S.detailId);
-    S.bidRate = Math.min(s.rate + BID_MAX, Math.max(s.rate, S.bidRate + BID_STEP * +step.dataset.step));
+    S.bidRate = Math.min(BID_TOP, Math.max(BID_MIN, S.bidRate + BID_STEP * +step.dataset.step));
     return updateBidSheet();
   }
   if (el.closest('#sendBid')) return sendBid();
@@ -1393,7 +1488,17 @@ $('#app').addEventListener('click', e => {
   if (el.closest('#askPlanner')) { $('#adviceBox').innerHTML = adviceHTML(byId(S.detailId), 'open'); return; }
   if (el.closest('#cancelAdvice')) { $('#adviceBox').innerHTML = adviceHTML(byId(S.detailId)); return; }
   if (el.closest('#sendAdvice')) { S.adviceAsked[S.detailId] = true; $('#adviceBox').innerHTML = adviceHTML(byId(S.detailId)); return; }
-  if (el.closest('#notif')) return openDetail('lindehof', 'melding');
+  if (el.closest('#notif')) {
+    // Vanuit de melding kom je op de tijdlijn, bij de dag van de dienst; de dienst licht even op
+    S.entry = 'melding';
+    goTab('discover');
+    setTimeout(() => {
+      scrollToDay(byId('lindehof').day);
+      const t = $('[data-open="lindehof"]', $('#discBody'));
+      if (t) { t.classList.add('pulse'); setTimeout(() => t.classList.remove('pulse'), 2600); }
+    }, 380);
+    return;
+  }
   if (el.closest('#skip')) { S.entry = 'ontdek'; return goTab('discover'); }
   if (el.closest('#vList')) { S.view = 'lijst'; return renderDiscover(); }
   if (el.closest('#vMap')) { S.view = 'kaart'; S.mapSel = null; return renderDiscover(); }
